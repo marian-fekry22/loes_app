@@ -6,7 +6,8 @@ import 'Payment.dart';
 import 'ShippingAddress.dart';
 import 'Widget/BottomMenu.dart';
 class CheckoutPage extends StatefulWidget {
-  CheckoutPage({Key key, this.title}) : super(key: key);
+  int product_id;
+  CheckoutPage({Key key, this.title,@required this.product_id}) : super(key: key);
 
   final String title;
 

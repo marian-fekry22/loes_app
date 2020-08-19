@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loes_app/CalendarTab.dart';
 import 'package:loes_app/Cheackout2.dart';
 import 'package:loes_app/Checkout.dart';
 
@@ -27,6 +28,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 //      home: SplashScreen(),
       home: Home(),
+//      home: CalendarTab(),
+
     );
   }
 }

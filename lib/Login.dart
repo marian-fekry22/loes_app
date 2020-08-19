@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:loes_app/Edit/Home.dart';
 import 'model/city.dart';
 import 'dart:convert';
 import 'Discover.dart';
@@ -48,7 +49,10 @@ class _LoginPageState extends State<LoginPage> {
         prefs.setString('userId', userId.toString());
         prefs.setString('userEmail', userEmail.toString());
         prefs.setString('userName', userName.toString());
-        Navigator.push(context, MaterialPageRoute(builder: (context) => DiscoverPage()),);
+
+//        print(' id =$userId');
+//        Navigator.push(context, MaterialPageRoute(builder: (context) => DiscoverPage()),);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Home()),);
       }
       message = res['message']['message'];
     } else {

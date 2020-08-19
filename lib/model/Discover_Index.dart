@@ -23,6 +23,7 @@ class Discover_Index {
  final shop_by_brand;
  final spaced_out_products;
  final shop_by_product;
+ final remaining_brands_with_its_products;
 
   Discover_Index({this.just_dropped_products,
     this.section1,
@@ -36,12 +37,14 @@ class Discover_Index {
     this.brand_order_4, this.products_of_brand_order_4,
     this.trending_products, this.shop_by_brand,
     this.shop_by_product, this.spaced_out_products,
+    this.remaining_brands_with_its_products
   });
 
   factory Discover_Index.fromJson(Map<String, dynamic> json) {
 
 //print(json['brand_order_1']);
 //    print(dataList[0]);
+//  print ('${}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
     return Discover_Index(
       just_dropped_products: json['just_dropped_products'],
       section1:json['section1'],
@@ -63,6 +66,7 @@ class Discover_Index {
       shop_by_brand:json['shop_by_brand'],
       shop_by_product:json['shop_by_product'],
       spaced_out_products:json['spaced_out_products'],
+      remaining_brands_with_its_products:json ['remaining_brands_with_its_products']
 
 
     );

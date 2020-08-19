@@ -46,11 +46,16 @@ class _BottomMenuState extends State<BottomMenu> {
           new BottomNavigationBarItem(icon: new Icon(Icons.home , color: Colors.white,),
               title: new Text("home".toUpperCase() ,style: TextStyle(color : Colors.white ,
                   fontSize: 10))),
-          new BottomNavigationBarItem(icon: new Icon(Icons.search , color: Colors.white,), title: new Text("search".toUpperCase() , style: TextStyle(color : Colors.white , fontSize: 10))),
-          new BottomNavigationBarItem(icon: new Icon(Icons.accessibility , color: Colors.white,), title: new Text("wishlist".toUpperCase(), style: TextStyle(color : Colors.white , fontSize: 10))),
+          new BottomNavigationBarItem(icon: new Icon(Icons.search ,
+            color: Colors.white,), title: new Text("search".toUpperCase() ,
+              style: TextStyle(color : Colors.white , fontSize: 10))),
+
+          new BottomNavigationBarItem(icon: new Icon(Icons.accessibility ,
+            color: Colors.white,), title: new Text("wishlist".toUpperCase(),
+              style: TextStyle(color : Colors.white , fontSize: 10))),
           new BottomNavigationBarItem(icon: new Icon(Icons.person , color: Colors.white,), title: new Text("profile".toUpperCase() , style: TextStyle(color : Colors.white , fontSize: 10)))
         ],
-//        onTap: _onTap,
+        onTap: _onTap,
       );
     }
 }

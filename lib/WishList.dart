@@ -16,13 +16,18 @@ Future<void> main() async {
     void main() => runApp(Login());
   }
 }
+
 Future<List<Photo>> fetchPhotos(http.Client client) async {
   final prefs = await SharedPreferences.getInstance();
+
   if(prefs.getString('userId')!='' && prefs.getString('userId') != null){
+//    print('gggggggggggggggggggg >>>>>>>>>>>${prefs.getString('userId')}');
+//    String id=prefs.getString('userId');
     String userId =prefs.getString('userId').substring(prefs.getString('userId').length -2);
     var userIdArray  = userId.split(']');
     var userIdd = userIdArray[0];
-    final url = 'https://itloes.com/m/api/myWishlist?client_id='+userIdd;
+//    final url = 'https://itloes.com/m/api/myWishlist?client_id='+'1';
+    final url = 'https://itloes.com/m/api/myWishlist?client_id='+userId;
     final response = await client.get(url);
 
     // Use the compute function to run parsePhotos in a separate isolate.

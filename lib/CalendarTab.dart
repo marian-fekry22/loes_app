@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:loes_app/Contants/MyText.dart';
+import 'package:loes_app/model/productDetails.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'Porduct.dart';
@@ -16,6 +20,84 @@ class CalendarTab extends StatefulWidget {
 
 
 class _CalendarTabState extends State<CalendarTab> {
+
+  Future<productDetails> futuredata;
+  bool connection=false;
+
+
+  @override
+  void initState() {
+    super.initState();
+//    futuredata = fetch_DiscoverData_index();
+    check_internet();
+
+
+  }
+
+
+  @override
+  void dispose() {
+//    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+
+  check_internet()async{
+//    var connectivityResult = await (Connectivity().checkConnectivity());
+//    if (connectivityResult == ConnectivityResult.none) {
+//      print('no internet ????????????????????????????????????????????????????????????????????????????????????????????????');
+//    }
+//  else if (connectivityResult == ConnectivityResult.wifi) {
+//    // I am connected to a wifi network.
+//      print(' internet ????????????????????????????????????????????????????????????????????????????????????????????????');
+//  }
+//    else    print(' internet ????????????????????????????????????????????????????????????????????????????????????????????????');
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        setState(() {
+          connection=true;
+          futuredata = fetch_DiscoverData_index();
+          print('connected');
+        });
+//          connection=true;
+//          futuredata = fetch_DiscoverData_index();
+//          print('connected');
+
+
+      }
+    } on SocketException catch (_) {
+
+      setState(() {
+        connection=false;
+        showInSnackBar();
+      });
+
+
+      print('not connected');
+    }
+
+  }
+
+
+
+  Future<productDetails> fetch_DiscoverData_index() async {
+    final response = await http.get('https://itloes.com/m/api/productDetails?id=1');
+
+    if (response.statusCode == 200) {
+
+
+      return productDetails.fromJson(json.decode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+
+
   bool faourite = true;
   Widget _discoverWidget() {
     return Container(
@@ -89,7 +171,7 @@ class _CalendarTabState extends State<CalendarTab> {
                       onTap: (){
                         Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                                builder: (BuildContext context) => Product()
+                                builder: (BuildContext context) => Product(product_id: 0,)
                             )
                         );
                       },
@@ -484,34 +566,92 @@ class _CalendarTabState extends State<CalendarTab> {
 
     );
   }
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
+        key: _scaffoldKey,
 //      bottomNavigationBar :BottomMenu(),
-      backgroundColor: Colors.white,
-      body: Container(
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 5.0),
-                    _discoverWidget(),
-                  ],
-                ),
-              ),
-            ),
-            //Positioned(top: 40, left: 0, child: _backButton()),
-          ],
-        ),
-      ),
+
+
+      body:(connection)?FutureBuilder<productDetails>(
+        future: futuredata,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Container(
+                height: height,
+                child: GridView.count(
+                  primary: false,
+                  padding: const EdgeInsets.all(0),
+
+                  crossAxisCount: 2,
+                  children: List.generate( snapshot.data.detailss.length, (index) {
+                    return  InkWell(
+                      onTap: (){
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                                builder: (BuildContext context) => Product(product_id: 0,)
+                            )
+                        );
+                      },
+                      child: Container(
+                        height: 500,
+
+                        decoration: BoxDecoration(
+//              color: Colors.teal[100],
+                            border: Border.all(color: Colors.black12),
+                            image: DecorationImage(image: NetworkImage('${snapshot.data.detailss[index]['image']}',),
+                                fit: BoxFit.fill)
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: Stack(
+                          children: [
+                            Text('${snapshot.data.detailss[index]['release_date']}'),
+                            Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Text('${snapshot.data.detailss[index]['description']}'),
+
+                                )),
+                          ],
+                        ),
+
+                      ),
+                    );
+                  }
+                  ),
+                )
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+
+          // By default, show a loading spinner.
+          return Center(child: CircularProgressIndicator());
+        },
+      ):null
+
+
     );
   }
+
+
+
+
+  showInSnackBar() {
+    return _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text('Check Your Internet Connection!'),
+          action: SnackBarAction(
+            label: 'Warrning',
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ),
+        )
+    );
+  }
+
 }

@@ -2,11 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loes_app/CalendarTab.dart';
 import 'package:loes_app/DiscoverTab.dart';
+//import 'package:loes_app/Edit/DiscoverHome.dart';
 import 'package:loes_app/Widget/BottomMenu.dart';
 import '../Discover.dart';
 import '../Search.dart';
 import '../WishList.dart';
 import '../UserProfile.dart';
+//import 'package:connectivity/connectivity.dart';
+
 
 
 class Home extends StatefulWidget {
@@ -15,6 +18,31 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  @override
+  void initState() {
+    super.initState();
+//    check_internet();
+  }
+
+  @override
+  void dispose() {
+//    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+
+//  check_internet()async{
+//  var connectivityResult = await (Connectivity().checkConnectivity());
+//  if (connectivityResult == ConnectivityResult.wifi) {
+//    print('wifi internet ????????????????????????????????????????????????????????????????????????????????????????????????');
+//  }
+////  else if (connectivityResult == ConnectivityResult.wifi) {
+////    // I am connected to a wifi network.
+////  }
+//  else    print(' internet ????????????????????????????????????????????????????????????????????????????????????????????????');
+//
+//  }
 
 
   @override
@@ -58,10 +86,14 @@ class _HomeState extends State<Home> {
       });
     }
 
-    return  DefaultTabController(
-        length: 2,
-        child:  Scaffold(
-          bottomNavigationBar :BottomMenu(),
+
+    return  Scaffold(
+      bottomNavigationBar: BottomMenu(),
+
+      body: DefaultTabController(
+          length: 2,
+          child:  Scaffold(
+//          bottomNavigationBar :BottomMenu(),
 
 
 //          bottomNavigationBar: BottomNavigationBar(
@@ -85,63 +117,70 @@ class _HomeState extends State<Home> {
 //            selectedItemColor: Colors.amber[800],
 ////            onTap: _onItemTapped,
 //          ),
-          appBar:  AppBar(
-            backgroundColor: Colors.white,
+
+            appBar:  AppBar(
+              backgroundColor: Colors.white,centerTitle: false,
 //            title: new Text("Title"),
 
-            title:  TabBar(
-                isScrollable: true,
-                labelColor: Colors.grey,
+              title:  TabBar(
+                  isScrollable: true,
+                  labelColor: Colors.grey,
 //                physics: NeverScrollableScrollPhysics(),
 //indicatorPadding: EdgeInsets.all(5),
 //                indicatorWeight: 3,
-                indicatorColor: Colors.black,
-                indicatorSize: TabBarIndicatorSize.label,
-                labelPadding: EdgeInsets.symmetric(horizontal: 20.0),
-
-                unselectedLabelStyle:TextStyle(color: Colors.black12,fontSize: 15) ,
+                  indicatorColor: Colors.black,
+                  indicatorSize: TabBarIndicatorSize.tab,
+//                  labelPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                  unselectedLabelStyle:TextStyle(color: Colors.black12,fontSize: 15) ,
 //                labelStyle: TextStyle(fontSize: 20) ,
-                tabs:[
 
-                  Container(
-                    width: MediaQuery.of(context).size.width*.3,
-                    height: 50,
-                    alignment: Alignment.center,
-                    child:  Tab(child: Text('Discover',
+//                labelStyle: TextStyle(fontSize: 20) ,
+                  tabs:[
+
+                    Container(
+                      width: MediaQuery.of(context).size.width*.3,
+
+                      height: 50,
+                      alignment: Alignment.centerLeft,
+                      child:  Tab(child: Text('Discover',
 //                      style: TextStyle(color: Colors.black),
-                    ),),),
+                      ),),),
 
-                  Container(
-                    width: MediaQuery.of(context).size.width*.3,
-                    height: 50,
-                    alignment: Alignment.center,
-                    child:  Tab(child: Text('Calendar',
+                    Container(
+                      width: MediaQuery.of(context).size.width*.3,
+                      height: 50,
+                      alignment: Alignment.center,
+                      child:  Tab(child: Text('Calendar',
 //                      style: TextStyle(color: Colors.black),
-                      ),),
-                  ),
+                        ),),
+                    ),
 
-            //      Tab(child: Text('Discover'),),
+              //      Tab(child: Text('Discover'),),
 //                  Tab(child: Text('Calendar'),),
 
 
-                ]),
+                  ]),
 
+            ),
+
+
+          body: Container(
+            child: TabBarView(
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+
+                DiscoverPage(),
+//
+//                Container(child: Text('gggggggggggg'),),
+//              DiscoverHome(),
+                CalendarTab(),
+
+              ],
+            ),
           ),
 
-
-        body: Container(
-          child: TabBarView(
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-//            DiscoverTab(),
-              DiscoverPage(),
-              CalendarTab(),
-
-
-            ],
-          ),
-        ),
-    ));
+      )),
+    );
   }
 
 
@@ -190,5 +229,8 @@ class _HomeState extends State<Home> {
 
     }));
   }
+
+
+
 
 }
