@@ -16,48 +16,21 @@ class Product extends StatefulWidget {
   int product_id;
   Product({@required this.product_id});
   @override
-  _ProductState createState() => _ProductState(id: product_id);
+  _ProductState createState() => _ProductState(product_id: product_id);
 }
 
 class _ProductState extends State<Product> {
 
-  int product_id=0;
-  int id;
-  _ProductState({@required this.id});
+  int product_id;
+
+  _ProductState({@required this.product_id});
 
   static const text2_color = Color(0xfff03cc0);
-  List<String> _Sizes_data = ['40', '41', '23', '43'];
   String _selected_size;
-
-  List<String> _Colors_data = ['red', 'blue', 'white'];
   String _selected_Colors;
 
   bool faourite = true;
-  List<String> _address_data = [
-    'Brand',
-    'Releasd Date',
-    'NickName',
-    'Color' 'Main Color',
-    'ColorAway',
-    'designer'
-  ];
-  List<String> _data = [
-    'Brand name',
-    '10/8/2020',
-    'Tokyo',
-    'Cv 200',
-    'Gray,White',
-    'Cilver',
-    'peter Moore'
-  ];
-  var _images_list=['assets/images/shose1.jpg','assets/images/shose2.png','assets/images/shose3.png','assets/images/shose4.png',
-    'assets/images/shose1.jpg','assets/images/shose2.png','assets/images/shose3.png','assets/images/shose4.png'];
-  var _price_list=['255 \$','93 \$','300 \$','93 \$',
-    '255 \$','93 \$','300 \$','93 \$'];
-  var _description_list=['all Jordan  1 highh zom','Description all Jordan  1 highh zom',
-    'all Jordan  1 highh zom','all Jordan  1 highh zom',
-    'all Jordan  1 highh zom','Description all Jordan  1 highh zom',
-    'all Jordan  1 highh zom','all Jordan  1 highh zom'];
+
 
   var data_Us_Sizes = ['All','US1',
     'Us 2','US4',
@@ -95,15 +68,7 @@ class _ProductState extends State<Product> {
 
 
   check_internet()async{
-//    var connectivityResult = await (Connectivity().checkConnectivity());
-//    if (connectivityResult == ConnectivityResult.none) {
-//      print('no internet ????????????????????????????????????????????????????????????????????????????????????????????????');
-//    }
-//  else if (connectivityResult == ConnectivityResult.wifi) {
-//    // I am connected to a wifi network.
-//      print(' internet ????????????????????????????????????????????????????????????????????????????????????????????????');
-//  }
-//    else    print(' internet ????????????????????????????????????????????????????????????????????????????????????????????????');
+
 
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -132,21 +97,16 @@ class _ProductState extends State<Product> {
 
   }
 
-
+int x=3;
 
   Future<productDetails> fetch_DiscoverData_index() async {
-    final response = await http.get('https://itloes.com/m/api/productDetails?id=1');
+    final response = await http.get('https://itloes.com/m/api/productDetails?id=${product_id}');
+
 
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-//      print('${response.body}+lllllllllllllllllllllllllllllllllllllllllllllllllllll');
-//      final parsed=  jsonDecode(response.body).cast<Map<String, dynamic>>();
-//      print(parsed['details']['brand']);
       return productDetails.fromJson(json.decode(response.body));
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
+
       throw Exception('Failed to load album');
     }
   }
@@ -204,11 +164,11 @@ class _ProductState extends State<Product> {
             if (snapshot.hasData) {
 
 
-               List product_images=snapshot.data.detailss[product_id]['image'].toString().split(',').toList();
-               List product_sizes=snapshot.data.detailss[product_id]['sizes'].toString().split(',').toList();
-               List product_colors=snapshot.data.detailss[product_id]['colorWay'].toString().split(',').toList();
+               List product_images=snapshot.data.detailss[0]['image'].toString().split(',').toList();
+               List product_sizes=snapshot.data.detailss[0]['sizes'].toString().split(',').toList();
+               List product_colors=snapshot.data.detailss[0]['colorWay'].toString().split(',').toList();
 
-                   if(snapshot.data.detailss[product_id]['is_offered'].toString()=='yes'){
+                   if(snapshot.data.detailss[0]['is_offered'].toString()=='yes'){
                      faourite=true;
                    }else faourite= false;
 
@@ -258,7 +218,7 @@ class _ProductState extends State<Product> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      MyText(title: '${snapshot.data.detailss[product_id]['price']}'+' QAR',size: 15,fontWeight: FontWeight.bold,),
+                      MyText(title: '${snapshot.data.detailss[0]['price']}'+' QAR',size: 15,fontWeight: FontWeight.bold,),
 
                       Row(
                         children: <Widget>[
@@ -361,7 +321,7 @@ class _ProductState extends State<Product> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
-                    child:MyText(title:  '${snapshot.data.detailss[product_id]['category']}'.toUpperCase(),
+                    child:MyText(title:  '${snapshot.data.detailss[0]['category']}'.toUpperCase(),
                       alien: TextAlign.center,
                       size: 20,fontWeight: FontWeight.bold,
                     ),
@@ -386,12 +346,12 @@ class _ProductState extends State<Product> {
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
                         children: [
-                        return_Detailes_listview('Brand',  '${snapshot.data.detailss[product_id]['brand']}'),
-                        return_Detailes_listview('Released Date',  '${snapshot.data.detailss[product_id]['release_date']}'),
-                        return_Detailes_listview('nick Name',  '${snapshot.data.detailss[product_id]['nickname']}'),
-                        return_Detailes_listview('Main Color',  '${snapshot.data.detailss[product_id]['main_color']}'),
-                        return_Detailes_listview('color Way',  '${snapshot.data.detailss[product_id]['colorWay']}'),
-                        return_Detailes_listview('Designer',  '${snapshot.data.detailss[product_id]['designer']}'),
+                        return_Detailes_listview('Brand',  '${snapshot.data.detailss[0]['brand']}'),
+                        return_Detailes_listview('Released Date',  '${snapshot.data.detailss[0]['release_date']}'),
+                        return_Detailes_listview('nick Name',  '${snapshot.data.detailss[0]['nickname']}'),
+                        return_Detailes_listview('Main Color',  '${snapshot.data.detailss[0]['main_color']}'),
+                        return_Detailes_listview('color Way',  '${snapshot.data.detailss[0]['colorWay']}'),
+                        return_Detailes_listview('Designer',  '${snapshot.data.detailss[0]['designer']}'),
 
                         ],
                     )
@@ -412,7 +372,7 @@ class _ProductState extends State<Product> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: MyText(title: '${snapshot.data.detailss[product_id]['description']}'
+                  child: MyText(title: '${snapshot.data.detailss[0]['description']}'
                     ,size: 14,),
 
                 ),
@@ -432,7 +392,7 @@ class _ProductState extends State<Product> {
                           onPressed: () {},
                           child: Column(children: <Widget>[
                             MyText(title: 'OFFER', colorr: Colors.white,),
-                            MyText(title: '${snapshot.data.detailss[product_id]['offer_price']}'+' QAR',
+                            MyText(title: '${snapshot.data.detailss[0]['offer_price']}'+' QAR',
                               colorr: text2_color, size: 10,),
 
 
@@ -446,7 +406,7 @@ class _ProductState extends State<Product> {
                           },
                           child: Column(children: <Widget>[
                             MyText(title: 'BUY NOW', colorr: Colors.white,),
-                            MyText(title: '${snapshot.data.detailss[product_id]['offer_price']}'+' QAR', colorr: text2_color, size: 10,),
+                            MyText(title: '${snapshot.data.detailss[0]['offer_price']}'+' QAR', colorr: text2_color, size: 10,),
 
                           ],),),
                       ),

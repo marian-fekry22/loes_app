@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loes_app/Contants/MyText.dart';
+import 'package:loes_app/Porduct.dart';
 import 'package:loes_app/model/Discover_Index.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -192,7 +193,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
 //                    _header(),
                               SizedBox(height: 2.0),
 
-                              return_section_name( title: 'justdropped',ontap: (){}),
+                              return_section_name( title: 'justdropped',ontap: (){
+
+                              }),
                               _discoverWidget(
                                 images_array: snapshot.data.just_dropped_products,),
                               return_section( sectionimage: snapshot.data.section1['image'].toString()),
@@ -207,9 +210,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               _discoverWidget(
                                 images_array: snapshot.data.products_of_brand_order_2,),
 
+
                               SizedBox(height: 5.0),
+                              return_section_name(title: 'New arrivals Products', ontap: (){}),
                               _discoverWidget(
-                                images_array: snapshot.data.new_arrivals_products,),
+                                images_array: snapshot.data.new_arrivals_products),
                               SizedBox(height: 5.0),
                               return_section(sectionimage: snapshot.data.section3['image'].toString()),
                               return_section_name( title:'${snapshot.data.brand_order_3.toString()}',ontap: (){}),
@@ -219,11 +224,24 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               return_section(sectionimage: snapshot.data.section4['image'].toString()),
                               SizedBox(height: 5.0),
                               return_section_name( title:'${snapshot.data.brand_order_4.toString()}',ontap: (){}),
-//                          _discoverWidget(
-//                            images_array: snapshot.data.products_of_brand_order_4,),
-                              _discoverWidget(
-                                images_array: snapshot.data.trending_products,),
+                          _discoverWidget(
+                            images_array: snapshot.data.products_of_brand_order_4,),
+
+                              return_section_name( title:'Trending Products'),
+                              return_listView_product(product: snapshot.data.trending_products,),
+
+//                              _discoverWidget(
+//                                images_array: snapshot.data.trending_products,),
                               SizedBox(height: 5.0),
+
+//                              return_section(sectionimage: snapshot.data.section5['image'].toString()),
+
+                              SizedBox(height: 5.0),
+                              return_section_name( title:'${snapshot.data.brand_order_5.toString()}',ontap: (){}),
+                              _discoverWidget(
+                                images_array: snapshot.data.products_of_brand_order_5,),
+                              SizedBox(height: 5.0),
+                              return_section_name( title:'Shop by Brand',ontap: (){}),
                               _discoverWidget(
                                 images_array: snapshot.data.shop_by_brand,),
                               SizedBox(height: 5.0),
@@ -231,14 +249,18 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                 images_array: snapshot.data.spaced_out_products,),
                               SizedBox(height: 5.0),
 
+
+
+
                               return_section_name(title: 'shop by product', ontap: null),
-                              _discoverWidget(
-                                images_array: snapshot.data.shop_by_product,),
+                              return_listView_product(product: snapshot.data.shop_by_product,),
+//                              _discoverWidget(
+//                                images_array: snapshot.data.shop_by_product,),
                               SizedBox(height: 5.0),
 
-                              return_section_name(title: 'Remaining brands', ontap: null),
-                              _discoverWidget(
-                                images_array: snapshot.data.remaining_brands_with_its_products,),
+                              return_listView_RemaningBrand(product:  snapshot.data.remaining_brands_with_its_products,),
+//                              _discoverWidget(
+//                                images_array: snapshot.data.remaining_brands_with_its_products,),
 
                             ],
                           ),
@@ -279,7 +301,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   Widget _discoverWidget({@required List images_array}) {
-    return Container(
+    return (images_array!=null)?Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
@@ -293,35 +315,44 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   scrollDirection: Axis.horizontal,
                   itemCount: images_array.length,
                   itemBuilder: (BuildContext context, int index) =>
-                      Container(
+                      InkWell(
+                        onTap: (){
+                          Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) => Product(product_id:  images_array[index]['id'],)
+                              )
+                          );
+                        },
+                        child: Container(
 //                            height: 150,
-                        width: 150,
-                        color: Colors.transparent,
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        //  padding: EdgeInsets.symmetric(horizontal: 30),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          width: 150,
+                          color: Colors.transparent,
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          //  padding: EdgeInsets.symmetric(horizontal: 30),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
 //                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            Expanded(
-                              flex: 3,
-                              child: Image.network(
-                                images_array[index]['image'],
-                                fit: BoxFit.fill,
+                            children: <Widget>[
+                              Expanded(
+                                flex: 3,
+                                child: Image.network(
+                                  ( images_array[index]['image']!=null)? images_array[index]['image']:null,
+                                  fit: BoxFit.fill,
 //                                    height:200,width: 150,
-                              ),
-
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: MyText(title: '${images_array[index]['name']}',)
+                                ),
 
                               ),
-                            ),
-                          ],
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: MyText(title: '${images_array[index]['name']}',)
+
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ))),
 
@@ -584,7 +615,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
         ],
       ),
 
-    );
+    ):null;
   }
 
   Widget return_section_name({@required String title,@required Function ontap}){
@@ -604,7 +635,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             ),
             textAlign: TextAlign.right,
           ),
-          InkWell(
+          (ontap!=null)?  InkWell(
             //func
             onTap:ontap,
             child:  Text(
@@ -617,24 +648,115 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 fontWeight: FontWeight.w400,
               ),
               textAlign: TextAlign.right,
-            ),)
+            ),):Text('')
         ],
       ),
     );
   }
 
+
+  return_listView_product({@required List product}){
+    return Container(
+
+//        margin: EdgeInsets.only(top: 20,bottom: 20),
+        //padding: EdgeInsets.symmetric(horizontal: 30),
+        height: 300,
+        child: ListView.builder(
+//                      shrinkWrap: true,
+//            scrollDirection: Axis.horizontal,
+            itemCount: product.length,
+            itemBuilder: (BuildContext context, int index) =>
+                Card(
+                  child: Container(
+                              height: 50,
+                    width: 150,
+                    color: Colors.transparent,
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    //  padding: EdgeInsets.symmetric(horizontal: 30),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+crossAxisAlignment: CrossAxisAlignment.center,
+//                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: MyText(title: '${index+1}',size: 20,),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          width: 100,
+                          height: 100,
+                          child: Image.network(
+                            ( product[index]['image']!=null)? product[index]['image']:null,
+                            fit: BoxFit.fill,
+//                                    height:200,width: 150,
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: MyText(title: '${product[index]['name']}',),
+                        ),
+                      ],
+                    ),
+                  ),
+                )));
+  }
+
+  return_listView_RemaningBrand({@required List product}){
+    return Container(
+
+//        margin: EdgeInsets.only(top: 20,bottom: 20),
+      //padding: EdgeInsets.symmetric(horizontal: 30),
+        height: 300,
+        child: ListView.builder(
+//                      shrinkWrap: true,
+//            scrollDirection: Axis.horizontal,
+            itemCount: product.length,
+            itemBuilder: (BuildContext context, int index) =>
+                Card(
+                  child: Container(
+                    height: 50,
+                    width: 150,
+                    color: Colors.transparent,
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    //  padding: EdgeInsets.symmetric(horizontal: 30),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+//                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: MyText(title: '${index+1}',size: 20,),
+                        ),
+
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: MyText(title: '${product[index]['name']}',),
+                        ),
+                      ],
+                    ),
+                  ),
+                )));
+  }
+
 Widget return_section({@required String sectionimage}){
-    return  Container(
-      width: MediaQuery.of(context).size.width ,
-      height:400 ,
-      decoration: BoxDecoration(
-        image: DecorationImage(image:
-        NetworkImage(sectionimage),
+    return  InkWell(
 
-            fit:BoxFit.fill
+      child: Container(
+        width: MediaQuery.of(context).size.width ,
+        height:400 ,
+        decoration: BoxDecoration(
+          image: DecorationImage(image:
+          NetworkImage(sectionimage),
+
+              fit:BoxFit.fill
+          ),
         ),
-      ),
 
+      ),
     );
 }
 
@@ -650,18 +772,18 @@ Widget return_section({@required String sectionimage}){
     );
   }
 
-   showInSnackBar() {
-   return _scaffoldKey.currentState.showSnackBar(
-       SnackBar(
-           content: Text('Check Your Internet Connection!'),
-     action: SnackBarAction(
-       label: 'Warrning',
-       onPressed: () {
-         // Some code to undo the change.
-       },
-     ),
-   )
-       );
+  showInSnackBar() {
+    return _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text('Check Your Internet Connection!'),
+          action: SnackBarAction(
+            label: 'Warrning',
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ),
+        )
+    );
   }
 
 

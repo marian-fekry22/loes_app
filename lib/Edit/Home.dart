@@ -19,9 +19,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  bool _isVisible = true;
+  ScrollController controller;
+
   @override
   void initState() {
     super.initState();
+    controller = ScrollController();
+//    controller.addListener(() {
+//      setState(() {
+//        _isVisible = controller.position.userScrollDirection == ScrollDirection.forward;
+//      });
+//    });
 //    check_internet();
   }
 
@@ -166,7 +175,7 @@ class _HomeState extends State<Home> {
 
           body: Container(
             child: TabBarView(
-              physics: NeverScrollableScrollPhysics(),
+//              physics: NeverScrollableScrollPhysics(),
               children: [
 
                 DiscoverPage(),

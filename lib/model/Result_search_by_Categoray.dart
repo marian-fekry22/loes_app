@@ -2,8 +2,8 @@ class Result_search_by_Categoray{
 
 
 
-  final id;
-  final name;
+  final int id;
+  final String name;
   final price;
   final brand;
   final image;
@@ -14,24 +14,11 @@ class Result_search_by_Categoray{
   factory Result_search_by_Categoray.fromJson(Map<String, dynamic> json) {
 
 
-//    final jsonBody = json.decode(response.body) as List;
-//     jsonBody.map((data) => new EmployeeModel.fromJson(data)).toList();
-
-//   var list = json['results']['details'] as List;
-//   print('${list[0]['brand']}'+';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;');
-    //List<Data> dataList = list.map((i) => Data.fromJson(i)).toList();
-
-
-print(json['results']['results']['name']+'>>>>oooooooooooooooooooooooooo>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-
-//    print(dataList[0]);
-//  print ('${}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
     return Result_search_by_Categoray(
-      id: json['id'],
-//      name: json['results']['results'],
-//      price: json['results']['results'],
-//      brand: json['results']['results'],
-//      image: json['results']['results'],
+      name: json['result'][0]['results'][0]['name'],
+//        price: json['result']['results'][0][0]['price'],
+//        brand: json['result']['results'][0][0]['brand'],
+//    image: json['result']['results'][0][0]['image'],
 
 
     );

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loes_app/Contants/MyText.dart';
+import 'package:loes_app/model/Categories.dart';
 import 'package:loes_app/model/productDetails.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -22,6 +23,10 @@ class CalendarTab extends StatefulWidget {
 class _CalendarTabState extends State<CalendarTab> {
 
   Future<productDetails> futuredata;
+
+
+
+
   bool connection=false;
 
 
@@ -43,15 +48,7 @@ class _CalendarTabState extends State<CalendarTab> {
 
 
   check_internet()async{
-//    var connectivityResult = await (Connectivity().checkConnectivity());
-//    if (connectivityResult == ConnectivityResult.none) {
-//      print('no internet ????????????????????????????????????????????????????????????????????????????????????????????????');
-//    }
-//  else if (connectivityResult == ConnectivityResult.wifi) {
-//    // I am connected to a wifi network.
-//      print(' internet ????????????????????????????????????????????????????????????????????????????????????????????????');
-//  }
-//    else    print(' internet ????????????????????????????????????????????????????????????????????????????????????????????????');
+
 
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -589,20 +586,22 @@ class _CalendarTabState extends State<CalendarTab> {
                   children: List.generate( snapshot.data.detailss.length, (index) {
                     return  InkWell(
                       onTap: (){
-                        Navigator.of(context).pushReplacement(
+                        Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (BuildContext context) => Product(product_id: 0,)
+                                builder: (BuildContext context) => Product(product_id: snapshot.data.detailss[index]['id'],)
                             )
                         );
                       },
                       child: Container(
-                        height: 500,
-
+//                        height: 700,
+                        margin: EdgeInsets.all(10),
                         decoration: BoxDecoration(
 //              color: Colors.teal[100],
                             border: Border.all(color: Colors.black12),
-                            image: DecorationImage(image: NetworkImage('${snapshot.data.detailss[index]['image']}',),
+                            image: DecorationImage(image:
+                            NetworkImage('${snapshot.data.detailss[index]['image']}',),
                                 fit: BoxFit.fill)
+
                         ),
                         padding: const EdgeInsets.all(8),
                         child: Stack(
@@ -611,8 +610,8 @@ class _CalendarTabState extends State<CalendarTab> {
                             Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Text('${snapshot.data.detailss[index]['description']}'),
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text('${snapshot.data.detailss[index]['description']}',textAlign: TextAlign.center,),
 
                                 )),
                           ],

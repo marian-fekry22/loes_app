@@ -27,6 +27,7 @@ class _BottomMenuState extends State<BottomMenu> {
 //          return Home();
           }
           else if(_currentIndex==1){
+//            return new test();
             return new SearchPage();
           }
           else if(_currentIndex==2){
