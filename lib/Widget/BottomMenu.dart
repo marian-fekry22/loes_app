@@ -31,6 +31,7 @@ class _BottomMenuState extends State<BottomMenu> {
             return new SearchPage();
           }
           else if(_currentIndex==2){
+//            return new WishListPage();
             return new WishListPage();
           }
           else

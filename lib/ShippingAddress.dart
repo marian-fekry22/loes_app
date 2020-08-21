@@ -160,7 +160,8 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
       actions: <Widget>[
         FlatButton(
           onPressed: () {
-            /*...*/
+            ///////////////////////
+           Navigator.pop(context,'adress data');
           },
           child: Text(
             "SAVE",
@@ -187,6 +188,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
+
       body: Container(
         height: height,
         child: Stack(

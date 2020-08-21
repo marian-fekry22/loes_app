@@ -19,9 +19,6 @@ class _PaymentPageState extends State<PaymentPage> {
 
 
 
-
-
-
   Widget _paymentWidget() {
      return Container(
        padding: EdgeInsets.symmetric(horizontal: 5),

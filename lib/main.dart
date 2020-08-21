@@ -6,6 +6,7 @@ import 'package:loes_app/Checkout.dart';
 
 import 'package:loes_app/Discover.dart';
 import 'package:loes_app/Edit/Home.dart';
+import 'package:loes_app/Edit/ShowAll.dart';
 import 'package:loes_app/SplashScreen.dart';
 
 void main() {
@@ -27,7 +28,9 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
 //      home: SplashScreen(),
+
       home: Home(),
+//      home: CheckoutPage(),
 //      home: CalendarTab(),
 
     );

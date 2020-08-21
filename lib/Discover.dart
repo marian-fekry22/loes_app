@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loes_app/Contants/MyText.dart';
+import 'package:loes_app/Edit/ShowAll.dart';
 import 'package:loes_app/Porduct.dart';
 import 'package:loes_app/model/Discover_Index.dart';
 import 'dart:async';
@@ -174,8 +175,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
         body:(connection)?FutureBuilder<Discover_Index>(
           future: futuredata,
           builder: (context, snapshot) {
-//          print('${snapshot.data.section1['image'].toString()}+>>>image >>>>>>>>>>>>>>>');
-
             if (snapshot.hasData) {
               return Container(
                 height: height,
@@ -194,7 +193,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               SizedBox(height: 2.0),
 
                               return_section_name( title: 'justdropped',ontap: (){
-
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => ShowAll(section_name: 'allDropped',)
+                                    )
+                                );
                               }),
                               _discoverWidget(
                                 images_array: snapshot.data.just_dropped_products,),
@@ -227,7 +230,14 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           _discoverWidget(
                             images_array: snapshot.data.products_of_brand_order_4,),
 
-                              return_section_name( title:'Trending Products'),
+                              return_section_name( title: 'Trending Products',ontap: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => ShowAll(section_name: 'allTrending',)
+                                    )
+                                );
+                              }),
+//                              return_section_name( title:'Trending Products'),
                               return_listView_product(product: snapshot.data.trending_products,),
 
 //                              _discoverWidget(
@@ -245,6 +255,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               _discoverWidget(
                                 images_array: snapshot.data.shop_by_brand,),
                               SizedBox(height: 5.0),
+                              return_section_name( title: 'Spaced',ontap: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => ShowAll(section_name: 'allSpaced',)
+                                    )
+                                );
+                              }),
                               _discoverWidget(
                                 images_array: snapshot.data.spaced_out_products,),
                               SizedBox(height: 5.0),

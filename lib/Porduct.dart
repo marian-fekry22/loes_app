@@ -28,8 +28,12 @@ class _ProductState extends State<Product> {
   static const text2_color = Color(0xfff03cc0);
   String _selected_size;
   String _selected_Colors;
+ String product_image;
+ String product_Name;
 
-  bool faourite = true;
+ String product_offer_price;
+
+  bool faourite = false;
 
 
   var data_Us_Sizes = ['All','US1',
@@ -48,7 +52,7 @@ class _ProductState extends State<Product> {
 
   Future<productDetails> futuredata;
   bool connection=false;
-
+  var userid=1;
 
   @override
   void initState() {
@@ -67,6 +71,7 @@ class _ProductState extends State<Product> {
   }
 
 
+  Future<Map> futurewishlist;
   check_internet()async{
 
 
@@ -76,6 +81,7 @@ class _ProductState extends State<Product> {
         setState(() {
           connection=true;
           futuredata = fetch_DiscoverData_index();
+          futurewishlist = fetch_wishlist();
           print('connected');
         });
 //          connection=true;
@@ -97,7 +103,6 @@ class _ProductState extends State<Product> {
 
   }
 
-int x=3;
 
   Future<productDetails> fetch_DiscoverData_index() async {
     final response = await http.get('https://itloes.com/m/api/productDetails?id=${product_id}');
@@ -110,6 +115,95 @@ int x=3;
       throw Exception('Failed to load album');
     }
   }
+
+  List wishlist_id=[];
+
+  Future<Map> fetch_wishlist() async {
+    final response = await http.get('https://itloes.com/m/api/myWishlist?client_id=${userid}');
+
+
+    if (response.statusCode == 200) {
+
+      final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
+      for(var item in parsed){
+        wishlist_id.add(item['id']);
+//        wishlist_names.add(item['name']);
+      }
+      if(wishlist_id.contains(product_id)){
+        setState(() {
+          faourite=true;
+        });
+      }else setState(() {
+        faourite=false;
+      });
+      return parsed[0];
+    } else {
+
+      throw Exception('Failed to load album');
+    }
+  }
+
+  String resultMessage;
+
+  RemovaAndAdd_Wishlist_item() async{
+
+    if(faourite){
+      print('='*100);
+
+      setState(()async {
+        resultMessage=await Remove_from_wishlist();
+        faourite=(resultMessage=='fail')?true:false;
+        print('$faourite');
+        showInSnackBar(text: resultMessage);
+
+      });
+    }else{
+//      print('='*100);
+
+      setState(()async {
+        resultMessage=await Add_from_wishlist();
+        faourite=(resultMessage=='fail')?false:true;
+        print('$faourite');
+        showInSnackBar(text: resultMessage);
+      });
+//     showInSnackBar(text: resultMessage);
+    }
+//    print('$faourite');
+//    showInSnackBar(text: resultMessage);
+  }
+
+  Future<String> Add_from_wishlist() async {
+    final response = await http.get('https://itloes.com/m/api/addToWishlist?client_id=${userid}&product_id=${product_id}');
+
+
+    if (response.statusCode == 200) {
+
+      final parsed = jsonDecode(response.body) as Map;
+      print("+"*100);
+      print(parsed['message']['message']);
+
+
+      return parsed['message']['message'];
+    } else {
+
+      throw Exception('Failed to load album');
+    }
+  }
+  Future<String> Remove_from_wishlist() async {
+    final response = await http.get('https://itloes.com/m/api/removeFromWishlist?id=${product_id}');
+
+
+    if (response.statusCode == 200) {
+
+      final parsed = jsonDecode(response.body) as Map;
+      return parsed['result']['status'];
+    } else {
+
+      throw Exception('Failed to load album');
+    }
+  }
+
+
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -137,11 +231,24 @@ int x=3;
             button_color: Colors.white,
             border_color: Colors.black,
               onpressed: (){
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => CheckoutPage(product_id: product_id,)
-                    )
-                );
+                if(_selected_size==null|| _selected_Colors==null){
+                  showInSnackBar(text: 'Check you Selection');
+                }else{
+                  Navigator.of(context).push(
+
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => CheckoutPage(product_id: product_id,
+                            product_image:product_image,
+                            product_Name: product_Name,
+                            product_color:_selected_Colors.toString(),
+                            product_size: _selected_size.toString(),
+                            product_All_price: product_offer_price,
+                            is_favourite: faourite,
+
+                          )
+                      )
+                  );
+                }
               },
             )
 
@@ -168,17 +275,20 @@ int x=3;
                List product_sizes=snapshot.data.detailss[0]['sizes'].toString().split(',').toList();
                List product_colors=snapshot.data.detailss[0]['colorWay'].toString().split(',').toList();
 
-                   if(snapshot.data.detailss[0]['is_offered'].toString()=='yes'){
-                     faourite=true;
-                   }else faourite= false;
+               product_image=product_images[0];
+               product_Name=snapshot.data.detailss[0]['name'];
+               product_offer_price=snapshot.data.detailss[0]['offer_price'];
+
+
+//               bool faourite = true;
+//                   if(snapshot.data.detailss[0]['is_offered'].toString()=='yes'){
+//                     faourite=true;
+//                   }else faourite= false;
 
 
               return ListView(children: <Widget>[
 
                 Container(
-
-//    width: MediaQuery.of(context).size.width,
-//    height: MediaQuery.of(context).size.height*.30,
                   child: Carousel(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * .30,
@@ -286,7 +396,8 @@ int x=3;
                           IconButton(
                             onPressed: () {
                               setState(() {
-                                faourite = !faourite;
+//                                faourite = !faourite;
+                                RemovaAndAdd_Wishlist_item();
                               });
                               // print(faourite.toString());
                             },
@@ -310,7 +421,12 @@ int x=3;
                         onpressed: (){
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                  builder: (BuildContext context) => CheckoutPage(product_id: product_id,)
+                                  builder: (BuildContext context) => CheckoutPage( product_image: snapshot.data.detailss[0]['image'],
+                                    product_Name: snapshot.data.detailss[0]['name'],
+                                    product_color:_selected_Colors.toString(),
+                                    product_size: _selected_size.toString(),
+                                    product_All_price: snapshot.data.detailss[0]['offer_price'],
+                                    is_favourite: faourite,product_id: product_id,)
                               )
                           );
                         },
@@ -392,7 +508,7 @@ int x=3;
                           onPressed: () {},
                           child: Column(children: <Widget>[
                             MyText(title: 'OFFER', colorr: Colors.white,),
-                            MyText(title: '${snapshot.data.detailss[0]['offer_price']}'+' QAR',
+                            MyText(title: '${product_offer_price}'+' QAR',
                               colorr: text2_color, size: 10,),
 
 
@@ -402,6 +518,25 @@ int x=3;
                         margin: EdgeInsets.symmetric(vertical: 5),
                         child: FlatButton(
                           onPressed: () {
+                            if(_selected_size==null|| _selected_Colors==null){
+                              showInSnackBar(text: 'Check you Selection');
+                            }else{
+                              Navigator.of(context).push(
+
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) => CheckoutPage(
+                                        product_id: product_id ,
+                                        product_image: snapshot.data.detailss[0]['image'],
+                                        product_Name: snapshot.data.detailss[0]['name'],
+                                        product_color:_selected_Colors.toString(),
+                                        product_size: _selected_size.toString(),
+                                        product_All_price: snapshot.data.detailss[0]['offer_price'],
+                                        is_favourite: faourite,
+
+                                      )
+                                  )
+                              );
+                            }
 
                           },
                           child: Column(children: <Widget>[
@@ -506,10 +641,10 @@ int x=3;
   }
 
 
-  showInSnackBar() {
+  showInSnackBar({@required String text}) {
     return _scaffoldKey.currentState.showSnackBar(
         SnackBar(
-          content: Text('Check Your Internet Connection!'),
+          content: Text(text),
           action: SnackBarAction(
             label: 'Warrning',
             onPressed: () {
