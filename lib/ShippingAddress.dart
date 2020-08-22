@@ -91,7 +91,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                       controller: passwordController,
                       validator: (value) {
                         if (value.isEmpty) {
-                          return 'Please enter password';
+                          return 'Please enter Address';
                         }
                         return null;
                       },
@@ -124,7 +124,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                       controller: passwordController,
                       validator: (value) {
                         if (value.isEmpty) {
-                          return 'Please enter password';
+                          return 'Please enter City';
                         }
                         return null;
                       },

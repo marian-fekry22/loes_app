@@ -31,7 +31,7 @@ class _ShowAllState extends State<ShowAll> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Shop All ' , style: TextStyle(fontSize: 25, fontFamily: 'Cairo' , color: const Color(0xff000000))),
+        title:  Text('${section_name.toUpperCase()}' , style: TextStyle(fontSize: 25, fontFamily: 'Cairo' , color: const Color(0xff000000))),
       ),
       body: FutureBuilder<List>(
         future: futureAllDropped,
@@ -47,7 +47,7 @@ class _ShowAllState extends State<ShowAll> {
                   itemBuilder: (context, index) {
                     //return Image.network(photos[index].thumbnailUrl);
                     return Container(
-                      padding: const EdgeInsets.all(10.0),
+//                      padding: const EdgeInsets.all(10.0),
                       child: Row(
                           children: <Widget>[
                             InkWell(
@@ -113,7 +113,7 @@ class _ShowAllState extends State<ShowAll> {
               );
 
           } else if (snapshot.hasError) {
-            return Center(child: Text("${snapshot.error}"));
+            return Center(child: Text("No data"));
           }
 
           // By default, show a loading spinner.

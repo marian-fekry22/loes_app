@@ -16,6 +16,15 @@ class PaymentPage extends StatefulWidget {
 
 class _PaymentPageState extends State<PaymentPage> {
 
+  int radio_value=0;
+  String paymentMethod='paypal';
+  @override
+  void initState() {
+    super.initState();
+
+
+  }
+
 
 
 
@@ -105,8 +114,15 @@ class _PaymentPageState extends State<PaymentPage> {
                            FittedBox(fit:BoxFit.fitWidth,
                              child:
                              Radio(
-                               value: '',
-                               groupValue: '',
+                               value: 0,
+                               activeColor: Colors.black,
+                               groupValue: radio_value,
+                               onChanged: (v){
+                                 setState(() {
+                                   paymentMethod='paypal';
+                                   radio_value=v;
+                                 });
+                               },
                              ),
                            ),
                          ],
@@ -174,8 +190,15 @@ class _PaymentPageState extends State<PaymentPage> {
                            FittedBox(fit:BoxFit.fitWidth,
                              child:
                              Radio(
-                               value: '',
-                               groupValue: '',
+                               value: 1,
+                               activeColor: Colors.black,
+                               groupValue: radio_value,
+                               onChanged: (v){
+                                 setState(() {
+                                   paymentMethod='Google Play';
+                                   radio_value=v;
+                                 });
+                               },
                              ),
                            ),
                          ],
@@ -242,7 +265,10 @@ class _PaymentPageState extends State<PaymentPage> {
         title: const Text('Payment' , style: TextStyle(fontSize: 25, fontFamily: 'Cairo' , color: const Color(0xff000000))),
     leading: IconButton(
     tooltip: 'Payment',
-    icon: const Icon(Icons.arrow_back),
+    icon:  Icon(Icons.arrow_back),
+      onPressed: (){
+        Navigator.pop(context,'$paymentMethod');
+      },
     ),
 
     );

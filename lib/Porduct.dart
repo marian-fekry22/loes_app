@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 //import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter_multi_carousel/carousel.dart';
+import 'package:loes_app/Edit/AllReleased.dart';
+import 'package:loes_app/model/DBhelper.dart';
+import 'package:loes_app/model/Order_Cart.dart';
 import 'package:loes_app/model/productDetails.dart';
 import 'Contants/MyRaisedButton.dart';
 import 'Contants/MyText.dart';
@@ -32,6 +35,7 @@ class _ProductState extends State<Product> {
  String product_Name;
 
  String product_offer_price;
+ String product_real_price;
 
   bool faourite = false;
 
@@ -50,8 +54,10 @@ class _ProductState extends State<Product> {
     '290 QAR','290 QAR', '290 QAR','290 QAR', '290 QAR','290 QAR', '290 QAR','290 QAR','290 QAR','290 QAR',
     '290 QAR','290 QAR', '290 QAR','290 QAR', '290 QAR','290 QAR', '290 QAR','290 QAR'];
 
+  DbHelper helper;
   Future<productDetails> futuredata;
   bool connection=false;
+
   var userid=1;
 
   @override
@@ -59,6 +65,7 @@ class _ProductState extends State<Product> {
     super.initState();
 //    futuredata = fetch_DiscoverData_index();
     check_internet();
+    helper = DbHelper();
 
 
   }
@@ -82,6 +89,7 @@ class _ProductState extends State<Product> {
           connection=true;
           futuredata = fetch_DiscoverData_index();
           futurewishlist = fetch_wishlist();
+
           print('connected');
         });
 //          connection=true;
@@ -206,7 +214,8 @@ class _ProductState extends State<Product> {
 
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  List product_sizes;
+  List product_colors;
 
   @override
   Widget build(BuildContext context) {
@@ -223,32 +232,49 @@ class _ProductState extends State<Product> {
         ),
         actions: <Widget>[
           Container(
-            width: 70,
+            width: 80,
             height: 10,
             margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
             child:
-            MyRaisedButton(child: MyText(title: 'Own',),
+            MyRaisedButton(child: MyText(title: 'ADD',size: 18,),
             button_color: Colors.white,
             border_color: Colors.black,
-              onpressed: (){
-                if(_selected_size==null|| _selected_Colors==null){
-                  showInSnackBar(text: 'Check you Selection');
-                }else{
-                  Navigator.of(context).push(
+              onpressed: ()async{
+               if(_selected_size!=null|| _selected_Colors!=null) {
 
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => CheckoutPage(product_id: product_id,
-                            product_image:product_image,
-                            product_Name: product_Name,
-                            product_color:_selected_Colors.toString(),
-                            product_size: _selected_size.toString(),
-                            product_All_price: product_offer_price,
-                            is_favourite: faourite,
+                 Order_Cart order = Order_Cart({
+                   'product_id': product_id,
+                   'product_Name': product_Name,
+                   'product_image': product_image,
+                   'product_size': _selected_size,
+                   'product_color': _selected_Colors,
+                   'product_All_price': int.parse(product_offer_price)
 
-                          )
-                      )
-                  );
-                }
+                 });
+
+                 int id = await helper.createOrder(order);
+               print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+                 print('order id is $id');
+
+               }
+//                if(_selected_size==null|| _selected_Colors==null){
+//                  showInSnackBar(text: 'Check you Selection');
+//                }else{
+//                  Navigator.of(context).push(
+//
+//                      MaterialPageRoute(
+//                          builder: (BuildContext context) => CheckoutPage(product_id: product_id,
+//                            product_image:product_image,
+//                            product_Name: product_Name,
+//                            product_color:_selected_Colors.toString(),
+//                            product_size: _selected_size.toString(),
+//                            product_All_price: product_offer_price,
+//                            is_favourite: faourite,
+//
+//                          )
+//                      )
+//                  );
+//                }
               },
             )
 
@@ -272,13 +298,16 @@ class _ProductState extends State<Product> {
 
 
                List product_images=snapshot.data.detailss[0]['image'].toString().split(',').toList();
-               List product_sizes=snapshot.data.detailss[0]['sizes'].toString().split(',').toList();
-               List product_colors=snapshot.data.detailss[0]['colorWay'].toString().split(',').toList();
+
+                  product_sizes=snapshot.data.detailss[0]['sizes'].toString().split(',').toList();
+                  product_colors=snapshot.data.detailss[0]['colorWay'].toString().split(',').toList();
+
+
 
                product_image=product_images[0];
                product_Name=snapshot.data.detailss[0]['name'];
                product_offer_price=snapshot.data.detailss[0]['offer_price'];
-
+             product_real_price=  snapshot.data.detailss[0]['price'];
 
 //               bool faourite = true;
 //                   if(snapshot.data.detailss[0]['is_offered'].toString()=='yes'){
@@ -328,7 +357,7 @@ class _ProductState extends State<Product> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      MyText(title: '${snapshot.data.detailss[0]['price']}'+' QAR',size: 15,fontWeight: FontWeight.bold,),
+                      MyText(title: '$product_real_price'+' QAR',size: 15,fontWeight: FontWeight.bold,),
 
                       Row(
                         children: <Widget>[
@@ -421,12 +450,14 @@ class _ProductState extends State<Product> {
                         onpressed: (){
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                  builder: (BuildContext context) => CheckoutPage( product_image: snapshot.data.detailss[0]['image'],
-                                    product_Name: snapshot.data.detailss[0]['name'],
-                                    product_color:_selected_Colors.toString(),
-                                    product_size: _selected_size.toString(),
-                                    product_All_price: snapshot.data.detailss[0]['offer_price'],
-                                    is_favourite: faourite,product_id: product_id,)
+                                  builder: (BuildContext context) => AllReleased(
+//                                    product_image: snapshot.data.detailss[0]['image'],
+//                                    product_Name: snapshot.data.detailss[0]['name'],
+//                                    product_color:_selected_Colors.toString(),
+//                                    product_size: _selected_size.toString(),
+//                                    product_All_price: snapshot.data.detailss[0]['offer_price'],
+//                                    is_favourite: faourite,product_id: product_id,
+                                    )
                               )
                           );
                         },
@@ -602,7 +633,7 @@ class _ProductState extends State<Product> {
                 GridView.count(
                   crossAxisCount: 4,
                   // Generate 100 Widgets that display their index in the List
-                  children: List.generate(data_Us_Sizes.length, (index) {
+                  children: List.generate(product_sizes.length, (index) {
                     return Container(
 
                       width: 50,
@@ -622,8 +653,8 @@ class _ProductState extends State<Product> {
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  MyText(title: data_Us_Sizes[index],colorr: Colors.black,),
-                                  MyText(title: data_Us_Sizes_prices[index],colorr: text2_color,fontWeight: FontWeight.bold,)
+                                  MyText(title: product_sizes[index],colorr: Colors.black,),
+                                  MyText(title: product_real_price,colorr: text2_color,fontWeight: FontWeight.bold,)
                                 ],)
                           ),
                         ),
@@ -646,7 +677,6 @@ class _ProductState extends State<Product> {
         SnackBar(
           content: Text(text),
           action: SnackBarAction(
-            label: 'Warrning',
             onPressed: () {
               // Some code to undo the change.
             },

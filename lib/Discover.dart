@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loes_app/Contants/MyText.dart';
+import 'package:loes_app/Edit/AllReleased.dart';
 import 'package:loes_app/Edit/ShowAll.dart';
+import 'package:loes_app/Edit/ShowAll_byCategory.dart';
+import 'package:loes_app/Edit/Show_All_ByBrand.dart';
 import 'package:loes_app/Porduct.dart';
 import 'package:loes_app/model/Discover_Index.dart';
 import 'dart:async';
@@ -92,86 +95,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 //      bottomNavigationBar :BottomMenu(),
 
       backgroundColor: Colors.white,
-//      body:(connection)?FutureBuilder<Discover_Index>(
-//        future: futuredata,
-//        builder: (context, snapshot) {
-////          print('${snapshot.data.section1['image'].toString()}+>>>image >>>>>>>>>>>>>>>');
-//
-//          if (snapshot.hasData) {
-//            return Container(
-//              height: height,
-//              child: Stack(
-//                children: <Widget>[
-//                  Container(
-//                    margin: EdgeInsets.only(top: 20),
-//                    padding: EdgeInsets.symmetric(horizontal: 5),
-//                    child: SingleChildScrollView(
-//                      child: Column(
-//                        crossAxisAlignment: CrossAxisAlignment.center,
-//                        mainAxisAlignment: MainAxisAlignment.center,
-//                        children: <Widget>[
-////                    _header(),
-//                          SizedBox(height: 2.0),
-//
-//                          return_section_name( title: 'justdropped',ontap: (){}),
-//                          _discoverWidget(
-//                            images_array: snapshot.data.just_dropped_products,),
-//                          return_section( sectionimage: snapshot.data.section1['image'].toString()),
-//
-//                          SizedBox(height: 2.0),
-//                          return_section_name( title: '${snapshot.data.brand_order_1.toString()}',ontap: (){}),
-//                          _discoverWidget(images_array: snapshot.data.products_of_brand_order_1,),
-//                          return_section( sectionimage: snapshot.data.section2['image'].toString()),
-//
-//                          SizedBox(height: 2.0),
-//                          return_section_name( title:'${snapshot.data.brand_order_2.toString()}',ontap: (){}),
-//                          _discoverWidget(
-//                            images_array: snapshot.data.products_of_brand_order_2,),
-//
-//                          SizedBox(height: 5.0),
-//                          _discoverWidget(
-//                            images_array: snapshot.data.new_arrivals_products,),
-//                          SizedBox(height: 5.0),
-//                          return_section(sectionimage: snapshot.data.section3['image'].toString()),
-//                          return_section_name( title:'${snapshot.data.brand_order_3.toString()}',ontap: (){}),
-//
-//                          _discoverWidget(
-//                            images_array: snapshot.data.products_of_brand_order_3,),
-//                          return_section(sectionimage: snapshot.data.section4['image'].toString()),
-//                          SizedBox(height: 5.0),
-//                          return_section_name( title:'${snapshot.data.brand_order_4.toString()}',ontap: (){}),
-////                          _discoverWidget(
-////                            images_array: snapshot.data.products_of_brand_order_4,),
-//                          _discoverWidget(
-//                            images_array: snapshot.data.trending_products,),
-//                          SizedBox(height: 5.0),
-//                          _discoverWidget(
-//                            images_array: snapshot.data.shop_by_brand,),
-//                          SizedBox(height: 5.0),
-//                          _discoverWidget(
-//                            images_array: snapshot.data.spaced_out_products,),
-//                          SizedBox(height: 5.0),
-//
-//                          return_section_name(title: 'shop by product', ontap: null),
-//                          _discoverWidget(
-//                            images_array: snapshot.data.shop_by_product,),
-//
-//                        ],
-//                      ),
-//                    ),
-//                  ),
-//                  //Positioned(top: 40, left: 0, child: _backButton()),
-//                ],
-//              ),
-//            );
-//          } else if (snapshot.hasError) {
-//            return Text("${snapshot.error}");
-//          }
-//
-//          // By default, show a loading spinner.
-//          return Center(child: CircularProgressIndicator());
-//        },
-//      ):Center(child: showInSnackBar(),)
+
         body:(connection)?FutureBuilder<Discover_Index>(
           future: futuredata,
           builder: (context, snapshot) {
@@ -192,7 +116,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 //                    _header(),
                               SizedBox(height: 2.0),
 
-                              return_section_name( title: 'justdropped',ontap: (){
+                              return_section_name( title: 'just Dropped',ontap: (){
                                 Navigator.of(context).push(
                                     MaterialPageRoute(
                                         builder: (BuildContext context) => ShowAll(section_name: 'allDropped',)
@@ -201,32 +125,151 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               }),
                               _discoverWidget(
                                 images_array: snapshot.data.just_dropped_products,),
-                              return_section( sectionimage: snapshot.data.section1['image'].toString()),
+
+                              return_section( sectionimage: snapshot.data.section1['image'].toString(),
+                                  ontap: (){
+                                if(snapshot.data.section1['type']=='Category'){
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) => ShowAll_byCategory(
+                                            category_id: int.parse(snapshot.data.section1['category_id']),)
+                                      )
+                                  );
+                                }else if(snapshot.data.section1['type']=='Product'){
+                                  print('Product');
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) => Product(product_id: snapshot.data.section1['product_id'],)
+                                      )
+                                  );
+                                }
+
+
+                              }),
 
                               SizedBox(height: 2.0),
-                              return_section_name( title: '${snapshot.data.brand_order_1.toString()}',ontap: (){}),
+                              return_section_name( title: '${snapshot.data.brand_order_1.toString()}',ontap: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => Show_All_ByBrand(brand_id:1,)
+                                    )
+                                );
+                              }),
+
                               _discoverWidget(images_array: snapshot.data.products_of_brand_order_1,),
-                              return_section( sectionimage: snapshot.data.section2['image'].toString()),
+
+                              return_section( sectionimage: snapshot.data.section2['image'].toString(),
+                                  ontap: (){
+                                    if(snapshot.data.section2['type']=='Category'){
+                                      print('Cateogry');
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) => ShowAll_byCategory(
+                                                category_id: int.parse(snapshot.data.section2['category_id']),)
+                                          )
+                                      );
+                                    }else if(snapshot.data.section2['type']=='Product'){
+                                      print('Product');
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) => Product(product_id:int.parse(snapshot.data.section2['product_id']),)
+                                          )
+                                      );
+                                    }
+
+
+                                  }
+                                  ),
 
                               SizedBox(height: 2.0),
-                              return_section_name( title:'${snapshot.data.brand_order_2.toString()}',ontap: (){}),
+
+                              return_section_name( title:'${snapshot.data.brand_order_2.toString()}',ontap: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => Show_All_ByBrand(brand_id: 2,)
+                                    )
+                                );
+                              }),
                               _discoverWidget(
                                 images_array: snapshot.data.products_of_brand_order_2,),
 
 
                               SizedBox(height: 5.0),
-                              return_section_name(title: 'New arrivals Products', ontap: (){}),
+
+                              return_section_name(title: 'New arrivals Products', ontap: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => AllReleased()
+                                    )
+                                );
+                              }),
+
                               _discoverWidget(
                                 images_array: snapshot.data.new_arrivals_products),
                               SizedBox(height: 5.0),
-                              return_section(sectionimage: snapshot.data.section3['image'].toString()),
-                              return_section_name( title:'${snapshot.data.brand_order_3.toString()}',ontap: (){}),
+
+                              return_section(sectionimage: snapshot.data.section3['image'].toString(),   ontap: (){
+                                if(snapshot.data.section3['type']=='Category'){
+                                  print('Cateogry');
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) => ShowAll_byCategory(
+                                            category_id: int.parse(snapshot.data.section3['category_id']),)
+                                      )
+                                  );
+                                }else if(snapshot.data.section3['type']=='Product'){
+                                  print('Product');
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) => Product(product_id:int.parse(snapshot.data.section3['product_id']),)
+                                      )
+                                  );
+                                }
+
+
+                              }),
+                              return_section_name( title:'${snapshot.data.brand_order_3.toString()}',ontap: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => Show_All_ByBrand(brand_id: 3,)
+                                    )
+                                );
+                              }),
 
                               _discoverWidget(
                                 images_array: snapshot.data.products_of_brand_order_3,),
-                              return_section(sectionimage: snapshot.data.section4['image'].toString()),
+
+
+
+                              return_section(sectionimage: snapshot.data.section4['image'].toString(),   ontap: (){
+                                if(snapshot.data.section4['type']=='Category'){
+                                  print('Cateogry');
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) => ShowAll_byCategory(
+                                            category_id: int.parse(snapshot.data.section4['category_id']),)
+                                      )
+                                  );
+                                }else if(snapshot.data.section4['type']=='Product'){
+                                  print('Product');
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) => Product(
+                                            product_id: int.parse(snapshot.data.section4['product_id']),)
+                                      )
+                                  );
+                                }
+
+
+                              }),
                               SizedBox(height: 5.0),
-                              return_section_name( title:'${snapshot.data.brand_order_4.toString()}',ontap: (){}),
+                              return_section_name( title:'${snapshot.data.brand_order_4.toString()}',ontap: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => Show_All_ByBrand(brand_id: 4,)
+                                    )
+                                );
+                              }),
                           _discoverWidget(
                             images_array: snapshot.data.products_of_brand_order_4,),
 
@@ -247,7 +290,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
 //                              return_section(sectionimage: snapshot.data.section5['image'].toString()),
 
                               SizedBox(height: 5.0),
-                              return_section_name( title:'${snapshot.data.brand_order_5.toString()}',ontap: (){}),
+                              return_section_name( title:'${snapshot.data.brand_order_5.toString()}',ontap: (){
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => Show_All_ByBrand(brand_id: 5,)
+                                    )
+                                );
+                              }),
                               _discoverWidget(
                                 images_array: snapshot.data.products_of_brand_order_5,),
                               SizedBox(height: 5.0),
@@ -352,11 +401,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
                             children: <Widget>[
                               Expanded(
                                 flex: 3,
-                                child: Image.network(
-                                  ( images_array[index]['image']!=null)? images_array[index]['image']:null,
-                                  fit: BoxFit.fill,
-//                                    height:200,width: 150,
+                                child:  FadeInImage.assetNetwork(
+                                  placeholder: 'assets/images/loading.gif',
+                                  image: images_array[index]['image'],
                                 ),
+//                                child: Image.network(
+//                                  ( images_array[index]['image']!=null)? images_array[index]['image']:null,
+//                                  fit: BoxFit.fill,
+////                                    height:200,width: 150,
+//                                ),
 
                               ),
                               Expanded(
@@ -703,11 +756,15 @@ crossAxisAlignment: CrossAxisAlignment.center,
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           width: 100,
                           height: 100,
-                          child: Image.network(
-                            ( product[index]['image']!=null)? product[index]['image']:null,
-                            fit: BoxFit.fill,
-//                                    height:200,width: 150,
+                          child:  FadeInImage.assetNetwork(
+                            placeholder: 'assets/images/loading.gif',
+                            image: product[index]['image'],
                           ),
+//                          child: Image.network(
+//                            ( product[index]['image']!=null)? product[index]['image']:null,
+//                            fit: BoxFit.fill,
+////                                    height:200,width: 150,
+//                          ),
                         ),
 
                         Padding(
@@ -759,8 +816,9 @@ crossAxisAlignment: CrossAxisAlignment.center,
                 )));
   }
 
-Widget return_section({@required String sectionimage}){
+Widget return_section({@required String sectionimage,@required ontap}){
     return  InkWell(
+      onTap: ontap,
 
       child: Container(
         width: MediaQuery.of(context).size.width ,
@@ -772,8 +830,14 @@ Widget return_section({@required String sectionimage}){
               fit:BoxFit.fill
           ),
         ),
+          child: FadeInImage.assetNetwork(
+            placeholder: 'assets/images/loading.gif',
+            image: sectionimage,
+          )
 
       ),
+
+
     );
 }
 

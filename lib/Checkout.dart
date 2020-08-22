@@ -51,9 +51,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
     @required this.is_favourite,});
 
 
+
+
+
   Future<Map> futuredata;
 
   int radio_value=0;
+
+  String paymentmethod='';
   String address='';
   String storage='';
   var userid;
@@ -305,11 +310,11 @@ Future<String> getUserId()async{
                          ),
                        ),
                           onTap: () {
-                          Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) => PaymentPage()
-                              )
-                          );
+//                          Navigator.of(context).push(
+//                              MaterialPageRoute(
+//                                  builder: (BuildContext context) => PaymentPage()
+//                              )
+//                          );
                           },
                         ),
                      )
@@ -325,7 +330,7 @@ Future<String> getUserId()async{
                              FittedBox(fit:BoxFit.fitWidth,
                                  child:
                                  Text(
-                                   'Add Payment Method +',
+                                   'Add Payment Method +\n $paymentmethod',
                                    style: TextStyle(
                                      fontSize: 15,
                                    ),
@@ -334,12 +339,16 @@ Future<String> getUserId()async{
                            ],
                          ),
                        ),
-                           onTap: (){
-                             Navigator.of(context).pushReplacement(
+                           onTap: ()async{
+                             var  result=await Navigator.of(context).push(
                                  MaterialPageRoute(
                                      builder: (BuildContext context) => PaymentPage()
                                  )
                              );
+                             setState(() {
+                               paymentmethod=result.toString();
+                               if(paymentmethod==null)return paymentmethod='';
+                             });
                            },
                          ),
                      )
@@ -420,8 +429,9 @@ Future<String> getUserId()async{
                                )
                            );
                            setState(() {
-                             if(address==null)return address='';
+
                              address=result.toString();
+                             if(address==null)return address='';
                            });
                          }
 
