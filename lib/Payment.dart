@@ -265,7 +265,7 @@ class _PaymentPageState extends State<PaymentPage> {
         title: const Text('Payment' , style: TextStyle(fontSize: 25, fontFamily: 'Cairo' , color: const Color(0xff000000))),
     leading: IconButton(
     tooltip: 'Payment',
-    icon:  Icon(Icons.arrow_back),
+    icon:  Icon(Icons.arrow_back,color: Colors.black,),
       onPressed: (){
      setState(() {
        if(radio_value==0){

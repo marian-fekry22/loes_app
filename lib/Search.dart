@@ -421,6 +421,7 @@ class _SearchPageState extends State<SearchPage> {
 //                        height: 700,
 //                        margin: EdgeInsets.all(10),
               decoration: BoxDecoration(
+
 //              color: Colors.teal[100],
                   border: Border.all(color: Colors.black12),
                   image: DecorationImage(image:

@@ -52,10 +52,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
   String city;
   String street;
   String building_no;
+  String f_name='el';
+  String l_name='el';
+  String phone='011111';
+  String email='el@gmil';
 
+List<String> orders_products_ids;
+  List<dynamic> orders_data=[];
 
   DbHelper helper;
-
+  var  ordersdata;
 
   int all_products_Prices=0;
 
@@ -68,6 +74,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   String paymentmethod='';
   String address='';
   String storage='';
+
   var userid;
   @override
   void initState() {
@@ -278,9 +285,12 @@ Future<String> getUserId()async{
                              city=result['city'];
                              street=result['street'];
                              building_no=result['building_no'];
-                             address='$city \n $street \n $building_no';
+                             address='$city \n $street  $building_no';
                              if(result.length==0)return address='';
                            });
+                           print(city);
+                           print(street);
+                           print(building_no);
                          }
 
                            },
@@ -544,12 +554,48 @@ Future<String> getUserId()async{
                  ), borderRadius: BorderRadius.circular(2)),
 
                  onPressed: () {
-                   setState(() {
-                     futureNewOrder=createNewOrder(product_id: '1',
-                         client_id: '1', f_name: 'elsayed', l_name: 'elsayed',
-                         phone: '0111111', email: 'el@gma', city: 'elm', zone: 'elm',
-                         street: 'elm', building_no: 'elm', notes: 'no', payment_done: '0');
-                   });
+                   if(city==null|| city==''||
+                       street==null|| street==''||
+                       building_no==null|| building_no==''||
+                   address==null|| address==''||
+                       paymentmethod==null|| paymentmethod==''){
+                     showInSnackBar();
+                   }else{
+                     List<Map> Orders=[];
+                     for(var  item in orders_data){
+                       print(item['product_id']);
+                       Map one_order={
+//                         'product_id':item['product_id'] ,
+                         'client_id ': userid,
+                         'f_name': f_name,
+                         'l_name': l_name,
+                         'phone': phone,
+                         'email': email,
+                         'city': city,
+                         'zone': street,
+                         'street': street,
+                         'building_no': building_no,
+                         'notes': 'no',
+                         'payment_done': paymentmethod,
+                       };
+                       Orders.add(one_order);
+
+                     }
+                     print(Orders[0]['building_no'].toString());
+
+                   }
+//                   print('ffffffffffffffffffff');
+//
+//
+//                     print(orders_data[0]);
+//
+//                   setState(() {
+//
+////                     futureNewOrder=createNewOrder(product_id: '1',
+////                         client_id: '1', f_name: 'elsayed', l_name: 'elsayed',
+////                         phone: '0111111', email: 'el@gma', city: 'elm', zone: 'elm',
+////                         street: 'elm', building_no: 'elm', notes: 'no', payment_done: '0');
+//                   });
 
                  },
                )
@@ -600,11 +646,14 @@ Future<String> getUserId()async{
     );
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      key: _scaffoldKey,
       bottomNavigationBar :BottomMenu(),
       backgroundColor: Colors.white,
       body: FutureBuilder(
@@ -615,7 +664,10 @@ Future<String> getUserId()async{
             return Center(child: CircularProgressIndicator(),);
           }else{
             print(snapshot.data.length);
-            var  ordersdata  =snapshot.data;
+
+              ordersdata  =snapshot.data;
+
+
             return Container(
               height: height,
               child: Stack(
@@ -647,6 +699,22 @@ Future<String> getUserId()async{
     );
   }
 
+
+
+
+  showInSnackBar() {
+    return _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text('enter Address And payment'),
+          action: SnackBarAction(
+            label: '',
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ),
+        )
+    );
+  }
 retrun_Orders({@required var data}){
 
     return (data.length>0)?
@@ -656,10 +724,32 @@ retrun_Orders({@required var data}){
           itemCount: data.length,
           itemBuilder:  (context, i){
             Orders order = Orders.fromMap(data[i]);
-
+//            orders_products_ids.add('${order.proId.toString()}');
               all_products_Prices+=order.price;
+            orders_data.add({
+              'product_id': order.proId,
+              'product_id': order.price.toString(),
+              'product_id': order.proImage,
+              'product_id': order.prosize,
+              'product_id': order.procolor,
+              'product_id': order.proName,
+              'client_id ': userid,
+              'f_name': f_name,
+              'l_name': l_name,
+              'phone': phone,
+              'email': email,
+              'city': city,
+              'zone': street,
+              'street': street,
+              'building_no': building_no,
+              'notes': 'no',
+              'payment_done': paymentmethod,
+            });
+
+
             print('$all_products_Prices befor delete');
             print(all_products_Prices);
+
             return  Container(
               color: Colors.black12,
               margin: EdgeInsets.only(bottom: 5),
@@ -869,6 +959,20 @@ retrun_Orders({@required var data}){
     }
   }
 
+  Map map={'orders':{
+    'product_id': '1',
+    'client_id ': '2',
+    'f_name': 'f_name',
+    'l_name': 'f_name',
+    'phone': 'f_name',
+    'email': 'f_name',
+    'city': 'f_name',
+    'zone': 'f_name',
+    'street': 'f_name',
+    'building_no': 'f_name',
+    'notes': 'f_name',
+    'payment_done': 'f_name',
+  }};
 
   Future<new_order> createNewOrder({
    @required String product_id,
@@ -892,36 +996,22 @@ retrun_Orders({@required var data}){
 //      headers: <String, String>{
 //        'Content-Type': 'application/json; charset=UTF-8',
 //      },
-      body: jsonEncode(<String, String>{
-        'Orders[product_id][0]': product_id,
-        'Orders[client_id][0] ': client_id,
-        'Orders[f_name][0]': f_name,
-        'Orders[l_name][0]': l_name,
-        'Orders[phone][0]': phone,
-        'Orders[email][0]': email,
-        'Orders[city][0]': city,
-        'Orders[zone][0]': zone,
-        'Orders[street][0]': street,
-        'Orders[building_no][0]': building_no,
-        'Orders[notes][0]': notes,
-        'Orders[payment_done][0]': payment_done,
+      body:
+      jsonEncode(
+          <String, String>{
+//        'Orders[product_id][0]': '1',
+//        'Orders[client_id][0] ': '2',
+//        'Orders[f_name][0]': 'f_name',
+//        'Orders[l_name][0]': 'f_name',
+//        'Orders[phone][0]': 'f_name',
+//        'Orders[email][0]': 'f_name',
+//        'Orders[city][0]': 'f_name',
+//        'Orders[zone][0]': 'f_name',
+//        'Orders[street][0]': 'f_name',
+//        'Orders[building_no][0]': 'f_name',
+//        'Orders[notes][0]': 'f_name',
+//        'Orders[payment_done][0]': 'f_name',
       }
-
-      //      body: jsonEncode(<String, String>{
-//        Orders['product_id'][0]: product_id,
-//        Orders['client_id'][0]: client_id,
-//        [ 'f_name'][0]: f_name,
-//        ['l_name'][0]: l_name,
-//        ['phone'][0]: phone,
-//        ['email'][0]: email,
-//        ['city'][0]: city,
-//        ['zone'][0]: zone,
-//        ['street'][0]: street,
-//        ['building_no'][0]: building_no,
-//        ['notes'][0]: notes,
-//        ['payment_done'][0]: payment_done,
-//      }),
-
       ),
 
 

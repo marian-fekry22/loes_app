@@ -30,6 +30,12 @@ class _ShowAllState extends State<ShowAll> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back,color: Colors.black,),
+          onPressed: (){
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: Colors.white,
         title:  Text('${section_name.toUpperCase()}' , style: TextStyle(fontSize: 25, fontFamily: 'Cairo' , color: const Color(0xff000000))),
       ),
@@ -41,12 +47,15 @@ class _ShowAllState extends State<ShowAll> {
                 height: MediaQuery.of(context).size.height,
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
+                    crossAxisCount: 2,
                   ),
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     //return Image.network(photos[index].thumbnailUrl);
                     return Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black12),
+                      ),
 //                      padding: const EdgeInsets.all(10.0),
                       child: Row(
                           children: <Widget>[

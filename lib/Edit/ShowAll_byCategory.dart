@@ -33,6 +33,12 @@ class _ShowAll_byCategoryState extends State<ShowAll_byCategory> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           title:  Text('Collection' , style: TextStyle(fontSize: 25, fontFamily: 'Cairo' , color: const Color(0xff000000))),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back,color: Colors.black,),
+            onPressed: (){
+              Navigator.pop(context);
+            },
+          ),
         ),
         body: FutureBuilder<Map>(
           future: fetch_Result_search_by_Categoray(),
@@ -53,6 +59,9 @@ class _ShowAll_byCategoryState extends State<ShowAll_byCategory> {
                   itemBuilder: (context, index) {
                     //return Image.network(photos[index].thumbnailUrl);
                     return Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black12),
+                      ),
 //                      padding: const EdgeInsets.all(10.0),
                       child: Row(
                           children: <Widget>[

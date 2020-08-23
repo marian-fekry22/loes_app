@@ -44,6 +44,9 @@ class _AllReleasedState extends State<AllReleased> {
                   children: List.generate( data.length, (index) {
 
                     return  Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black12),
+                      ),
                       child: InkWell(
                         onTap: (){
                           Navigator.of(context).pushReplacement(
@@ -112,6 +115,12 @@ class _AllReleasedState extends State<AllReleased> {
 
   Widget _header() {
     return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back,color: Colors.black,),
+        onPressed: (){
+          Navigator.pop(context);
+        },
+      ),
       backgroundColor: Colors.white,
       title: const Text('AllReleased' , style: TextStyle(fontSize: 25, fontFamily: 'Cairo' , color: const Color(0xff000000))),
 //      leading: IconButton(
