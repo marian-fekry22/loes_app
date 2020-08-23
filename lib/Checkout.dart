@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loes_app/Edit/Policy.dart';
+import 'package:loes_app/model/DBhelper.dart';
+import 'package:loes_app/model/Orders.dart';
 import 'package:loes_app/model/productDetails.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -10,29 +12,31 @@ import 'Widget/BottomMenu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class CheckoutPage extends StatefulWidget {
 
-  String product_Name;
-  String product_image;
-  String product_size;
-  String product_color;
-  String product_All_price;
-  bool is_favourite;
-  int product_id;
+//  String product_Name;
+//  String product_image;
+//  String product_size;
+//  String product_color;
+//  String product_All_price;
+//  bool is_favourite;
+//  int product_id;
 
   CheckoutPage({Key key, this.title,
-    @required this.product_image,
-    @required this.product_id,
-    @required this.product_Name,@required this.product_size,
-    @required this.product_color,@required this.product_All_price,
-    @required this.is_favourite,
+//    @required this.product_image,
+//    @required this.product_id,
+//    @required this.product_Name,@required this.product_size,
+//    @required this.product_color,@required this.product_All_price,
+//    @required this.is_favourite,
 
   }) : super(key: key);
 
   final String title;
 
   @override
-  _CheckoutPageState createState() => _CheckoutPageState(product_id: product_id,is_favourite: is_favourite,
-  product_All_price: product_All_price,product_color: product_color,product_image: product_image,product_Name: product_Name
-  ,product_size: product_size);
+  _CheckoutPageState createState() => _CheckoutPageState(
+//      product_id: product_id,is_favourite: is_favourite,
+//  product_All_price: product_All_price,product_color: product_color,product_image: product_image,product_Name: product_Name
+//  ,product_size: product_size
+  );
 }
 
 
@@ -45,11 +49,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   String product_All_price;
   bool is_favourite;
 
-  _CheckoutPageState({ @required this.product_image,@required this.product_id,
-    @required this.product_Name,@required this.product_size,
-    @required this.product_color,@required this.product_All_price,
-    @required this.is_favourite,});
+//  _CheckoutPageState({ @required this.product_image,@required this.product_id,
+//    @required this.product_Name,@required this.product_size,
+//    @required this.product_color,@required this.product_All_price,
+//    @required this.is_favourite,});
 
+  DbHelper helper;
 
 
 
@@ -65,7 +70,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   void initState() {
     super.initState();
-
+    helper = DbHelper();
 //  userid = getUserId()
  userid=1;
 
@@ -86,178 +91,14 @@ Future<String> getUserId()async{
   return 0.toString();
 }
 
-  Widget _CheckoutWidget() {
+  Widget _CheckoutWidget({@required orders}) {
      return Container(
        padding: EdgeInsets.symmetric(horizontal: 5),
        child: Container(
        child: Column(
          mainAxisAlignment: MainAxisAlignment.spaceBetween,
          children: <Widget>[
-       Container(
-         color: Colors.black12,
-           child: Row(
-             mainAxisAlignment: MainAxisAlignment.start,
-             children: <Widget>[
-               new Expanded (
-                   flex:3,
-                   child : Padding(
-                     padding: const EdgeInsets.only(left:0 , right:0),
-                     child: Container(
-                       child: Column(
-                         children: <Widget>[
-                          Image.network('$product_image' ,  height:MediaQuery.of(context).size.height * 0.20),
-
-                         ],
-                       ),
-                     ),
-                   )
-               ), //
-               new Expanded (
-                   flex:4,
-                   child : Padding(
-                     padding: const EdgeInsets.only(left:0 , right:0),
-                     child: Container(
-                       child: Column(
-                         children: <Widget>[
-                           FittedBox(fit:BoxFit.fitWidth,
-                             child:
-                             Text(
-                               '$product_Name',
-                               style: TextStyle(
-                                 fontFamily: 'Cairo',
-                                 fontSize: 15,
-                                 color: const Color(0xff000000),
-                                 fontWeight: FontWeight.w400,
-                               ),
-                               textAlign: TextAlign.right,
-                             ),
-                           ),
-                           Row (
-                               children: <Widget>[
-                                 new Expanded(
-                                   child: Column(
-                                     children : [Text('Size')],
-                                   ),
-                                 ),
-                                 new Expanded(
-                                   child: Column(
-                                     children : [Text('$product_size UK')],
-                                   ),
-                                 ),
-                               ]
-                           ),
-                           Row (
-                               children: <Widget>[
-                                 new Expanded(
-                                   child: Column(
-                                     children : [Text('Color')],
-                                   ),
-                                 ),
-                                 new Expanded(
-                                   child: Column(
-                                     children : [Text('$product_color')],
-                                   ),
-                                 ),
-                               ]
-                           ),
-                           Row (
-                               children: <Widget>[
-                                 new Expanded(
-                                   child: Column(
-                                     children : [
-                                       FittedBox(fit:BoxFit.fitWidth,
-                                         child:
-                                         Text(
-                                           'Total',
-                                           style: TextStyle(
-                                             fontFamily: 'Cairo',
-                                             fontSize: 15,
-                                             color: const Color(0xff000000),
-                                             fontWeight: FontWeight.w300,
-                                           ),
-                                           textAlign: TextAlign.right,
-                                         ),
-                                       ),
-                                     ],
-                                   ),
-                                 ),
-                                 new Expanded(
-                                   flex : 1,
-                                   child: Column(
-                                     children : [
-                                       FittedBox(fit:BoxFit.fitWidth,
-                                         child:
-                                         Text(
-                                           '.',
-                                           style: TextStyle(
-                                             fontFamily: 'Cairo',
-                                             //fontSize: 20,
-                                             color: Colors.white,
-                                             fontWeight: FontWeight.w400,
-                                           ),
-                                           textAlign: TextAlign.right,
-                                         ),
-                                       ),
-                                     ],
-                                   ),
-                                 ),
-                               ]
-                           ),
-                           Row (
-                               children: <Widget>[
-                                 new Expanded(
-                                   child: Column(
-                                     children : [
-                                       FittedBox(fit:BoxFit.fitWidth,
-                                         child:
-                                         Text(
-                                           '$product_All_price QAR',
-                                           style: TextStyle(
-                                             fontFamily: 'Cairo',
-                                             fontSize: 25,
-                                             color: const Color(0xff000000),
-                                             fontWeight: FontWeight.w400,
-                                           ),
-                                           textAlign: TextAlign.right,
-                                         ),
-                                       ),
-                                     ],
-                                   ),
-                                 ),
-                               ]
-                           ),
-                         ],
-                       ),
-                     ),
-                   )
-               ),//              new Expanded (
-               new Expanded (
-                   flex:1,
-                   child : Padding(
-                     padding: const EdgeInsets.only(top:20),
-                     child: Container(
-                       color: Colors.black,
-                       child: Column(
-                         children: <Widget>[
-                           IconButton(
-                             tooltip: 'wants',
-                             color: Colors.white,
-                             icon:  Icon(Icons.favorite , color:  (is_favourite == true ? Colors.red : Colors.white) ),
-                           ),
-                           IconButton(
-                             tooltip: 'wants',
-                             color: Colors.white,
-                             icon:  Icon(Icons.indeterminate_check_box ,  color: Colors.white ),
-                           ),
-
-                         ],
-                       ),
-                     ),
-                   )
-               ),
-             ],
-           ),
-         ),
+     retrun_Orders(data: orders),
            SizedBox(height: 15.0),
            Divider(
              color: Colors.black,
@@ -619,7 +460,7 @@ Future<String> getUserId()async{
                              FittedBox(fit:BoxFit.fitWidth,
                                  child:
                                  Text(
-                                   '${  int.parse(product_All_price)} QAR',
+                                   '180 QAR',
                                    style: TextStyle(
                                      fontSize: 15,
                                    ),
@@ -667,7 +508,7 @@ Future<String> getUserId()async{
                              FittedBox(fit:BoxFit.fitWidth,
                                  child:
                                  Text(
-                                   '${  int.parse(product_All_price)+120} QAR',
+                                   '${ 180+120} QAR',
                                    style: TextStyle(
                                      fontSize: 15,
                                    ),
@@ -727,32 +568,227 @@ Future<String> getUserId()async{
     return Scaffold(
       bottomNavigationBar :BottomMenu(),
       backgroundColor: Colors.white,
-      body: Container(
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 3),
-        child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    _header(),
-                    SizedBox(height: 5.0),
-                    _CheckoutWidget(),
-                  ],
-                ),
-        ),
-            ),
-            //Positioned(top: 40, left: 0, child: _backButton()),
-          ],
-        ),
+      body: FutureBuilder(
+        future: helper.allCourses(),
+        builder: (context, AsyncSnapshot snapshot){
+
+          if(!snapshot.hasData){
+            return Center(child: CircularProgressIndicator(),);
+          }else{
+            print(snapshot.data.length);
+            var data=snapshot.data;
+            return Container(
+              height: height,
+              child: Stack(
+                children: <Widget>[
+
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 3),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          _header(),
+                          SizedBox(height: 5.0),
+                          _CheckoutWidget(orders: data)
+
+                        ],
+                      ),
+                    ),
+                  ),
+//                        Positioned(top: 40, left: 0, child: _backButton()),
+                ],
+              ),
+            );
+          }
+        },
       ),
+
     );
   }
 
+retrun_Orders({@required var data}){
 
+    return Container(
+      height: 200,
+      child: ListView.builder(
+          itemCount: data.length,
+          itemBuilder:  (context, i){
+            Orders order = Orders.fromMap(data[i]);
+            print(order.proImage.toString());
+            return  Container(
+              color: Colors.black12,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Expanded (
+                      flex:3,
+                      child : Padding(
+                        padding: const EdgeInsets.only(left:0 , right:0),
+                        child: Container(
+                          child: Column(
+                            children: <Widget>[
+                              Image.network(order.proImage.toString() ,  height:MediaQuery.of(context).size.height * 0.20),
+
+                            ],
+                          ),
+                        ),
+                      )
+                  ),
+
+                  new Expanded (
+                      flex:4,
+                      child : Padding(
+                        padding: const EdgeInsets.only(left:0 , right:0),
+                        child: Container(
+                          child: Column(
+                            children: <Widget>[
+                              FittedBox(fit:BoxFit.fitWidth,
+                                child:
+                                Text(
+                                  '${order.proName}',
+                                  style: TextStyle(
+                                    fontFamily: 'Cairo',
+                                    fontSize: 15,
+                                    color: const Color(0xff000000),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                              Row (
+                                  children: <Widget>[
+                                    new Expanded(
+                                      child: Column(
+                                        children : [Text('Size')],
+                                      ),
+                                    ),
+                                    new Expanded(
+                                      child: Column(
+                                        children : [Text('${order.prosize} UK')],
+                                      ),
+                                    ),
+                                  ]
+                              ),
+                              Row (
+                                  children: <Widget>[
+                                    new Expanded(
+                                      child: Column(
+                                        children : [Text('Color')],
+                                      ),
+                                    ),
+                                    new Expanded(
+                                      child: Column(
+                                        children : [Text('${order.prosize}')],
+                                      ),
+                                    ),
+                                  ]
+                              ),
+                              Row (
+                                  children: <Widget>[
+                                    new Expanded(
+                                      child: Column(
+                                        children : [
+                                          FittedBox(fit:BoxFit.fitWidth,
+                                            child:
+                                            Text(
+                                              'Total',
+                                              style: TextStyle(
+                                                fontFamily: 'Cairo',
+                                                fontSize: 15,
+                                                color: const Color(0xff000000),
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                              textAlign: TextAlign.right,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    new Expanded(
+                                      flex : 1,
+                                      child: Column(
+                                        children : [
+                                          FittedBox(fit:BoxFit.fitWidth,
+                                            child:
+                                            Text(
+                                              '.',
+                                              style: TextStyle(
+                                                fontFamily: 'Cairo',
+                                                //fontSize: 20,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              textAlign: TextAlign.right,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]
+                              ),
+                              Row (
+                                  children: <Widget>[
+                                    new Expanded(
+                                      child: Column(
+                                        children : [
+                                          FittedBox(fit:BoxFit.fitWidth,
+                                            child:
+                                            Text(
+                                              '${order.price} QAR',
+                                              style: TextStyle(
+                                                fontFamily: 'Cairo',
+                                                fontSize: 25,
+                                                color: const Color(0xff000000),
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              textAlign: TextAlign.right,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                  ),//              new Expanded (
+                  new Expanded (
+                      flex:1,
+                      child : Padding(
+                        padding: const EdgeInsets.only(top:20),
+                        child: Container(
+                          color: Colors.black,
+                          child: Column(
+                            children: <Widget>[
+                              IconButton(
+                                tooltip: 'wants',
+                                color: Colors.white,
+                                icon:  Icon(Icons.favorite , color:  (is_favourite == true ? Colors.red : Colors.white) ),
+                              ),
+                              IconButton(
+                                tooltip: 'wants',
+                                color: Colors.white,
+                                icon:  Icon(Icons.indeterminate_check_box ,  color: Colors.white ),
+                              ),
+
+                            ],
+                          ),
+                        ),
+                      )
+                  ),
+                ],
+              ),
+            );
+
+
+          }
+      ),
+    );
+}
 
 
   Future<Map> fetch_DiscoverData_index() async {
@@ -762,15 +798,6 @@ Future<String> getUserId()async{
     if (response.statusCode == 200) {
 
       final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
-
-
-      print('+'*100);
-      print(response.body);
-      print('+'*100);
-      print(parsed[0]['id']);
-
-      print('+'*100);
-
       for(var item in parsed){
         wishlist_names.add(item['name']);
       }
@@ -780,11 +807,10 @@ Future<String> getUserId()async{
         });
 
       }
-      print('+'*100);
       return parsed[0];
     } else {
 
-      throw Exception('Failed to load album');
+      throw Exception('Failed to load ');
     }
   }
 

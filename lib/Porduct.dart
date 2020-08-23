@@ -8,12 +8,12 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_multi_carousel/carousel.dart';
 import 'package:loes_app/Edit/AllReleased.dart';
 import 'package:loes_app/model/DBhelper.dart';
-import 'package:loes_app/model/Order_Cart.dart';
 import 'package:loes_app/model/productDetails.dart';
 import 'Contants/MyRaisedButton.dart';
 import 'Contants/MyText.dart';
 import 'DetailScreen.dart';
 import 'Checkout.dart';
+import 'model/Orders.dart';
 
 class Product extends StatefulWidget {
   int product_id;
@@ -55,6 +55,7 @@ class _ProductState extends State<Product> {
     '290 QAR','290 QAR', '290 QAR','290 QAR', '290 QAR','290 QAR', '290 QAR','290 QAR'];
 
   DbHelper helper;
+
   Future<productDetails> futuredata;
   bool connection=false;
 
@@ -242,50 +243,28 @@ class _ProductState extends State<Product> {
               onpressed: ()async{
                if(_selected_size!=null|| _selected_Colors!=null) {
 
-                 Order_Cart order = Order_Cart({
-                   'product_id': product_id,
-                   'product_Name': product_Name,
-                   'product_image': product_image,
-                   'product_size': _selected_size,
-                   'product_color': _selected_Colors,
-                   'product_All_price': int.parse(product_offer_price)
+                 var order = Orders({'proId':product_id,'proName':product_Name.toString(),
+                   'proImage':product_image.toString(),
+                   'prosize':_selected_size.toString(),
+                   'procolor':_selected_Colors.toString(),
+                   'price':int.parse(product_offer_price)});
 
-                 });
+                 int id = await helper.createCourse(order);
+                 print(id);
+                 print(product_Name);
+                 if(id>=1){
+                   showInSnackBar(text: 'Added');
+                 }
+                 print('course id is $id');
 
-                 int id = await helper.createOrder(order);
-               print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
-                 print('order id is $id');
-
+               }else{
+                 showInSnackBar(text: 'Seclect color and size');
                }
-//                if(_selected_size==null|| _selected_Colors==null){
-//                  showInSnackBar(text: 'Check you Selection');
-//                }else{
-//                  Navigator.of(context).push(
-//
-//                      MaterialPageRoute(
-//                          builder: (BuildContext context) => CheckoutPage(product_id: product_id,
-//                            product_image:product_image,
-//                            product_Name: product_Name,
-//                            product_color:_selected_Colors.toString(),
-//                            product_size: _selected_size.toString(),
-//                            product_All_price: product_offer_price,
-//                            is_favourite: faourite,
-//
-//                          )
-//                      )
-//                  );
-//                }
+
               },
             )
 
-//            RaisedButton(
-//              color: Colors.white,
-//              onPressed: () {},
-//              shape: RoundedRectangleBorder(
-//                  borderRadius: BorderRadius.circular(5),
-//                  side: BorderSide(color: Colors.black)),
-//              child: Text('Own'),
-//            ),
+
           )
         ],
       ),
@@ -550,19 +529,19 @@ class _ProductState extends State<Product> {
                         child: FlatButton(
                           onPressed: () {
                             if(_selected_size==null|| _selected_Colors==null){
-                              showInSnackBar(text: 'Check you Selection');
+                              showInSnackBar(text: 'Seclect color and size');
                             }else{
                               Navigator.of(context).push(
 
                                   MaterialPageRoute(
                                       builder: (BuildContext context) => CheckoutPage(
-                                        product_id: product_id ,
-                                        product_image: snapshot.data.detailss[0]['image'],
-                                        product_Name: snapshot.data.detailss[0]['name'],
-                                        product_color:_selected_Colors.toString(),
-                                        product_size: _selected_size.toString(),
-                                        product_All_price: snapshot.data.detailss[0]['offer_price'],
-                                        is_favourite: faourite,
+//                                        product_id: product_id ,
+//                                        product_image: snapshot.data.detailss[0]['image'],
+//                                        product_Name: snapshot.data.detailss[0]['name'],
+//                                        product_color:_selected_Colors.toString(),
+//                                        product_size: _selected_size.toString(),
+//                                        product_All_price: snapshot.data.detailss[0]['offer_price'],
+//                                        is_favourite: faourite,
 
                                       )
                                   )
@@ -677,6 +656,7 @@ class _ProductState extends State<Product> {
         SnackBar(
           content: Text(text),
           action: SnackBarAction(
+          label: '',
             onPressed: () {
               // Some code to undo the change.
             },
