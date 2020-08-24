@@ -1,3 +1,4 @@
+
 import 'package:loes_app/model/Orders.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -40,9 +41,15 @@ class DbHelper{
     Database db = await createDatabase();
     return db.delete('Orders',where: 'id = ?',whereArgs:[id] );
   }
-  Future<int> deletetable(int id) async{
+
+  Future<void> deleteorder_ByName(String proName) async{
     Database db = await createDatabase();
-    await db.execute("DROP TABLE IF EXISTS Orders");
+    return db.delete('Orders',where: 'proName = ?',whereArgs:[proName] );
+  }
+
+  Future<int> deleteallData() async{
+    Database db = await createDatabase();
+     db.execute('delete * from Orders');
   }
 
 }

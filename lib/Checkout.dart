@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loes_app/Edit/Policy.dart';
-import 'package:loes_app/model/DBhelper.dart';
 import 'package:loes_app/model/Orders.dart';
+import 'package:loes_app/model/dbhelper.dart';
 import 'package:loes_app/model/productDetails.dart';
+import 'package:connectivity/connectivity.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'Payment.dart';
@@ -41,6 +42,8 @@ class CheckoutPage extends StatefulWidget {
 
 
 class _CheckoutPageState extends State<CheckoutPage> {
+  bool connection;
+
   int product_id;
   String product_Name;
   String product_image;
@@ -80,12 +83,37 @@ List<String> orders_products_ids;
   void initState() {
     super.initState();
     helper = DbHelper();
-//  userid = getUserId()
+    check_internet();
+
+  }
+
+  check_internet()async{
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi) {
+        ChangeValues(true);
+
+      } else {
+        ChangeValues(false);
+
+      }
+    });
 
 
-
-//    futuredata = fetch_DiscoverData_index();
-
+  }
+  void ChangeValues(bool connected ){
+    if(connected){
+      setState(() {
+        connection=true;
+        print('connected');
+      });
+    }else{
+      print('connected');
+      setState(() {
+        connection=false;
+        showInSnackBar();
+      });
+    }
   }
 
 Future<String> getUserId()async{
@@ -288,9 +316,7 @@ Future<String> getUserId()async{
                              address='$city \n $street  $building_no';
                              if(result.length==0)return address='';
                            });
-                           print(city);
-                           print(street);
-                           print(building_no);
+
                          }
 
                            },
@@ -300,149 +326,156 @@ Future<String> getUserId()async{
              ]
            ),
            SizedBox(height: 15.0),
-           Row(
-               //mainAxisAlignment: MainAxisAlignment.start,
-               children: <Widget>[
-                 new Expanded (
-                       child: Container(
-                         decoration: const BoxDecoration(
-                           border: Border(
-                             top: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
-                             left: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
-                             right: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
-                             bottom: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
+           InkWell(
+             onTap: (){
+               setState(() {
+                 all_products_Prices+=0;
+               });
+             },
+             child: Row(
+                 //mainAxisAlignment: MainAxisAlignment.start,
+                 children: <Widget>[
+                   new Expanded (
+                         child: Container(
+                           decoration: const BoxDecoration(
+                             border: Border(
+                               top: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
+                               left: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
+                               right: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
+                               bottom: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
+                             ),
+                           ),
+                           child: Column(
+                             children: <Widget>[
+                               FittedBox(
+                                 child:
+                                 Text(
+                                   'Standard 120 QAR',
+                                   style: TextStyle(
+                                     fontFamily: 'Cairo',
+                                     fontSize: 15,
+                                     color: const Color(0xff000000),
+                                     fontWeight: FontWeight.w400,
+                                   ),
+                                     textAlign: TextAlign.left,
+                                 ),
+                               ),
+                               FittedBox(
+                                 child:
+                                 Text(
+                                   'Dummy text',
+                                   style: TextStyle(
+                                     fontFamily: 'Cairo',
+                                     fontSize: 15,
+                                     color: const Color(0xff000000),
+                                     fontWeight: FontWeight.w300,
+                                   ),
+                                   textAlign: TextAlign.left,
+                                 ),
+                               ),
+
+
+                             ],
                            ),
                          ),
-                         child: Column(
-                           children: <Widget>[
-                             FittedBox(
-                               child:
-                               Text(
-                                 'Standard 120 QAR',
-                                 style: TextStyle(
-                                   fontFamily: 'Cairo',
-                                   fontSize: 15,
-                                   color: const Color(0xff000000),
-                                   fontWeight: FontWeight.w400,
-                                 ),
-                                   textAlign: TextAlign.left,
-                               ),
-                             ),
-                             FittedBox(
-                               child:
-                               Text(
-                                 'Dummy text',
-                                 style: TextStyle(
-                                   fontFamily: 'Cairo',
-                                   fontSize: 15,
-                                   color: const Color(0xff000000),
-                                   fontWeight: FontWeight.w300,
-                                 ),
-                                 textAlign: TextAlign.left,
-                               ),
-                             ),
+                   ), //
 
-
-                           ],
-                         ),
-                       ),
-                 ), //
-
-               ],
-             ),
+                 ],
+               ),
+           ),
            SizedBox(height: 15.0),
-           Row(
-               children: <Widget>[
-                 new Expanded (
-                     flex:1,
-                     child : Padding(
-                       padding: const EdgeInsets.only(left:0 , right:0),
-                       child: Container(
-                         child: Column(
-                           children: <Widget>[
-                             FittedBox(fit:BoxFit.fitWidth,
-                               child:
-                               Radio(
-                                 value: 1,
-                                 activeColor: Colors.black,
-                                 groupValue: radio_value,
-                                 onChanged: (v){
-                                   setState(() {
-                                     address='';
-                                     radio_value=v;
-                                   });
-                                 },
-                               ),
-                             ),
-                           ],
-                         ),
-                       ),
-                     )
-                 ),
-                 new Expanded (
-                     flex:3,
-                     child : Padding(
-                       padding: const EdgeInsets.only(left:0 , right:0),
-                       child: Container(
-                         child: Column(
-                           children: <Widget>[
-                             FittedBox(fit:BoxFit.fitWidth,
-                                 child:
-                                 Text(
-                                   'Store',
-                                   style: TextStyle(
-                                     fontSize: 15,
-                                     color: Colors.grey,
-                                     fontWeight: FontWeight.w200,
-                                   ),
-                                 )
-                             ),
-                           ],
-                         ),
-                       ),
-                     )
-                 ),
-                 new Expanded (
-                     flex:6,
-                     child : Padding(
-                       padding: const EdgeInsets.only(left:0 , right:0),
-                       child: InkWell(
-                         onTap: ()async{
-                           if(radio_value==1){
-                             var  result=await Navigator.of(context).push(
-                                 MaterialPageRoute(
-                                     builder: (BuildContext context) => ShippingAddressPage()
-                                 )
-                             );
-                             setState(() {
-                               if(storage==null)return storage='';
-                               storage=result.toString();
-                             });
-                           }
-
-
-                         },
-                         child: Column(
-                           children: <Widget>[
-                             FittedBox(fit:BoxFit.fitWidth,
-                                 child:
-                                 Text(
-                                   'Put into Stroge \n$storage',
-                                   style: TextStyle(
-                                     fontSize: 15,
-                                   ),
-                                 )
-                             ),
-                           ],
-                         ),
-                       ),
-                     )
-                 ),
-               ]
-           ),
-           Divider(
-             color: Colors.black,
-           ),
+//           Row(
+//               children: <Widget>[
+//                 new Expanded (
+//                     flex:1,
+//                     child : Padding(
+//                       padding: const EdgeInsets.only(left:0 , right:0),
+//                       child: Container(
+//                         child: Column(
+//                           children: <Widget>[
+//                             FittedBox(fit:BoxFit.fitWidth,
+//                               child:
+//                               Radio(
+//                                 value: 1,
+//                                 activeColor: Colors.black,
+//                                 groupValue: radio_value,
+//                                 onChanged: (v){
+//                                   setState(() {
+//                                     address='';
+//                                     radio_value=v;
+//                                   });
+//                                 },
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     )
+//                 ),
+//                 new Expanded (
+//                     flex:3,
+//                     child : Padding(
+//                       padding: const EdgeInsets.only(left:0 , right:0),
+//                       child: Container(
+//                         child: Column(
+//                           children: <Widget>[
+//                             FittedBox(fit:BoxFit.fitWidth,
+//                                 child:
+//                                 Text(
+//                                   'Store',
+//                                   style: TextStyle(
+//                                     fontSize: 15,
+//                                     color: Colors.grey,
+//                                     fontWeight: FontWeight.w200,
+//                                   ),
+//                                 )
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     )
+//                 ),
+//                 new Expanded (
+//                     flex:6,
+//                     child : Padding(
+//                       padding: const EdgeInsets.only(left:0 , right:0),
+//                       child: InkWell(
+//                         onTap: ()async{
+//                           if(radio_value==1){
+//                             var  result=await Navigator.of(context).push(
+//                                 MaterialPageRoute(
+//                                     builder: (BuildContext context) => ShippingAddressPage()
+//                                 )
+//                             );
+//                             setState(() {
+//                               if(storage==null)return storage='';
+//                               storage=result.toString();
+//                             });
+//                           }
+//
+//
+//                         },
+//                         child: Column(
+//                           children: <Widget>[
+//                             FittedBox(fit:BoxFit.fitWidth,
+//                                 child:
+//                                 Text(
+//                                   'Put into Stroge \n$storage',
+//                                   style: TextStyle(
+//                                     fontSize: 15,
+//                                   ),
+//                                 )
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     )
+//                 ),
+//               ]
+//           ),
+//           Divider(
+//             color: Colors.black,
+//           ),
            Row(
                children: <Widget>[
                  new Expanded (
@@ -554,48 +587,28 @@ Future<String> getUserId()async{
                  ), borderRadius: BorderRadius.circular(2)),
 
                  onPressed: () {
-                   if(city==null|| city==''||
-                       street==null|| street==''||
-                       building_no==null|| building_no==''||
+
+//                   print(orders_data.length);
+                   if(
+//                   city==null|| city==''||
+//                       street==null|| street==''||
+//                       building_no==null|| building_no==''||
                    address==null|| address==''||
                        paymentmethod==null|| paymentmethod==''){
                      showInSnackBar();
                    }else{
-                     List<Map> Orders=[];
-                     for(var  item in orders_data){
-                       print(item['product_id']);
-                       Map one_order={
-//                         'product_id':item['product_id'] ,
-                         'client_id ': userid,
-                         'f_name': f_name,
-                         'l_name': l_name,
-                         'phone': phone,
-                         'email': email,
-                         'city': city,
-                         'zone': street,
-                         'street': street,
-                         'building_no': building_no,
-                         'notes': 'no',
-                         'payment_done': paymentmethod,
-                       };
-                       Orders.add(one_order);
+//                     List<Map> Orders=[];
+                     for(int i=0;i<orders_data.length;i++){
+
+
+                       addOrderApi(i.toString() , orders_data[i]['product_id'] , f_name ,  l_name , phone , email , city , street , building_no  ,  paymentmethod);
+
+                       //print(Orders[item]['building_no'].toString());
 
                      }
-                     print(Orders[0]['building_no'].toString());
 
                    }
-//                   print('ffffffffffffffffffff');
-//
-//
-//                     print(orders_data[0]);
-//
-//                   setState(() {
-//
-////                     futureNewOrder=createNewOrder(product_id: '1',
-////                         client_id: '1', f_name: 'elsayed', l_name: 'elsayed',
-////                         phone: '0111111', email: 'el@gma', city: 'elm', zone: 'elm',
-////                         street: 'elm', building_no: 'elm', notes: 'no', payment_done: '0');
-//                   });
+
 
                  },
                )
@@ -656,7 +669,7 @@ Future<String> getUserId()async{
       key: _scaffoldKey,
       bottomNavigationBar :BottomMenu(),
       backgroundColor: Colors.white,
-      body: FutureBuilder(
+      body: (connection)?FutureBuilder(
         future: helper.allorders(),
         builder: (context, AsyncSnapshot snapshot){
 
@@ -694,7 +707,7 @@ Future<String> getUserId()async{
             );
           }
         },
-      ),
+      ):null,
 
     );
   }
@@ -715,6 +728,7 @@ Future<String> getUserId()async{
         )
     );
   }
+
 retrun_Orders({@required var data}){
 
     return (data.length>0)?
@@ -724,31 +738,44 @@ retrun_Orders({@required var data}){
           itemCount: data.length,
           itemBuilder:  (context, i){
             Orders order = Orders.fromMap(data[i]);
+            orders_data=[];
+
 //            orders_products_ids.add('${order.proId.toString()}');
-              all_products_Prices+=order.price;
-            orders_data.add({
-              'product_id': order.proId,
-              'product_id': order.price.toString(),
-              'product_id': order.proImage,
-              'product_id': order.prosize,
-              'product_id': order.procolor,
-              'product_id': order.proName,
-              'client_id ': userid,
-              'f_name': f_name,
-              'l_name': l_name,
-              'phone': phone,
-              'email': email,
-              'city': city,
-              'zone': street,
-              'street': street,
-              'building_no': building_no,
-              'notes': 'no',
-              'payment_done': paymentmethod,
-            });
+            all_products_Prices=0;
+              for(int i=0;i<data.length;i++){
+                Orders order = Orders.fromMap(data[i]);
+                all_products_Prices+=order.price;
+                orders_data.add({
+                  'product_id': order.proId,
+                  'product_id': order.price.toString(),
+                  'product_id': order.proImage,
+                  'product_id': order.prosize,
+                  'product_id': order.procolor,
+                  'product_id': order.proName,
+                  'client_id ': userid,
+                  'f_name': f_name,
+                  'l_name': l_name,
+                  'phone': phone,
+                  'email': email,
+                  'city': city,
+                  'zone': street,
+                  'street': street,
+                  'building_no': building_no,
+                  'notes': 'no',
+                  'payment_done': paymentmethod,
+                });
+              }
+
 
 
             print('$all_products_Prices befor delete');
             print(all_products_Prices);
+            print('3'*100);
+
+            for(var item in orders_data){
+              print(item.toString());
+            }
+
 
             return  Container(
               color: Colors.black12,
@@ -1030,9 +1057,45 @@ retrun_Orders({@required var data}){
   }
 
 
+  Future<void> addOrderApi(item , product_id , f_name ,  l_name , phone , email , city , street , building_no
+      ,  paymentmethod) async {
+    final prefs = await SharedPreferences.getInstance();
+//    String userId =prefs.getString('userId');
+    String userId ='3';
+//    String email =prefs.getString('userEmail');
+//    String userName =prefs.getString('userEmail');
+
+
+    var addOrderBody= {
+      'Orders[product_id][0]': product_id, 'Orders[client_id][0]': userId,
+      'Orders[f_name][0]': f_name, 'Orders[l_name][0]': l_name,
+      'Orders[phone][0]': phone, 'Orders[email][0]': email,
+      'Orders[city][0]': city, 'Orders[zone][0]': street,
+      'Orders[street][0]': street, 'Orders[building_no][0]': building_no,
+      'Orders[notes][0]': 'notes','Orders[payment_done][0]': '0'
+    };
+    var response = await http.post('https://itloes.com/m/api/newOrder?client_id='+userId ,body:addOrderBody);
+    if (response.statusCode == 200) {
+      final res = json.decode(response.body);
+      print(res['result']['message']);
+//      if(res['result']['message']=='Thank you .. your request has sent successfully ..'){
+//        for(int i=0;i<orders_data.length;i++) {
+//        String proName=   orders_data[i]['proName'];
+//        helper.deleteorder_ByName(proName);
+//        }
+//
+//
+//      }
+
+    }
+
+
+  }
 
 
 }
+
+
 
 class new_order {
 

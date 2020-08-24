@@ -15,17 +15,36 @@ class ShowAll extends StatefulWidget {
 }
 
 class _ShowAllState extends State<ShowAll> {
+
+
   String section_name;
   _ShowAllState({@required this.section_name});
+
+  final ScrollController scrollController = new ScrollController();
+  int currentPageNumber=1;
+  MovieLoadMoreStatus loadMoreStatus = MovieLoadMoreStatus.STABLE;
+//  CancelableOperation movieOperation;
 
 
   Future<List> futureAllDropped;
 
+
   @override
   void initState() {
     super.initState();
-    futureAllDropped = fetch_ShopAll(section_name);
+    futureAllDropped = fetch_ShopAll(section_name,currentPageNumber);
+    currentPageNumber =1;
+    super.initState();
   }
+
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+//    if(movieOperation != null) movieOperation.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,24 +64,29 @@ class _ShowAllState extends State<ShowAll> {
           if (snapshot.hasData) {
             return Container(
                 height: MediaQuery.of(context).size.height,
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  ),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    //return Image.network(photos[index].thumbnailUrl);
-                    return Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12),
-                      ),
+                child: NotificationListener(
+                  onNotification: onNotification,
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
+                    controller: scrollController,
+
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, index) {
+                      //return Image.network(photos[index].thumbnailUrl);
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black12),
+                        ),
 //                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                          children: <Widget>[
-                            InkWell(
-                              child :  Container(
-                                child: Column(
-                                  children: <Widget>[
+                        child: Row(
+                            children: <Widget>[
+                              InkWell(
+                                child :  Container(
+                                  child: Column(
+                                    children: <Widget>[
 //                                    FittedBox(fit:BoxFit.fitWidth,
 //                                      child:
 //                                      Text(
@@ -76,14 +100,14 @@ class _ShowAllState extends State<ShowAll> {
 //                                        textAlign: TextAlign.right,
 //                                      ),
 //                                    ),
-                                    Image.network(
-                                      (snapshot.data[index]['image']),
-                                      width: MediaQuery.of(context).size.width * 0.40,
-                                    ),
+                                      Image.network(
+                                        (snapshot.data[index]['image']),
+                                        width: MediaQuery.of(context).size.width * 0.40,
+                                      ),
 
-                                    SizedBox(
-                                      height: 3.0,
-                                    ),
+                                      SizedBox(
+                                        height: 3.0,
+                                      ),
 //                                    FittedBox(
 //                                      fit:BoxFit.fitWidth,
 //                                      child : Icon(
@@ -92,32 +116,33 @@ class _ShowAllState extends State<ShowAll> {
 //                                        color: (faourite == true ? Colors.red : Colors.black),
 //                                      ),
 //                                    ),
-                                    FittedBox(fit:BoxFit.fitWidth,
-                                      child:  Text(snapshot.data[index]['name'].toUpperCase(),
-                                        style: TextStyle(
-                                          fontFamily: 'Cairo',
-                                          fontSize: 14,
-                                          color: const Color(0xff000000),
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),),
+                                      FittedBox(fit:BoxFit.fitWidth,
+                                        child:  Text(snapshot.data[index]['name'].toUpperCase(),
+                                          style: TextStyle(
+                                            fontFamily: 'Cairo',
+                                            fontSize: 14,
+                                            color: const Color(0xff000000),
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),),
 
-                                  ],
+                                    ],
+                                  ),
                                 ),
+                                onTap: (){
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) => Product(product_id: snapshot.data[index]['id'],)
+                                      )
+                                  );
+                                },
                               ),
-                              onTap: (){
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) => Product(product_id: snapshot.data[index]['id'],)
-                                    )
-                                );
-                              },
-                            ),
-                          ]
-                      ),
-                    );
-                  },
+                            ]
+                        ),
+                      );
+                    },
+                  ),
                 ),
               );
 
@@ -133,14 +158,42 @@ class _ShowAllState extends State<ShowAll> {
   }
 
 
+  bool onNotification(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification) {
+      if (scrollController.position.maxScrollExtent > scrollController.offset &&
+          scrollController.position.maxScrollExtent - scrollController.offset <=
+              50) {
+        if (loadMoreStatus != null &&
+            loadMoreStatus == MovieLoadMoreStatus.STABLE) {
+          loadMoreStatus = MovieLoadMoreStatus.LOADING;
 
+          currentPageNumber+=1;
+          Future<List> item=fetch_ShopAll(section_name, currentPageNumber);
+          setState(() {
+            futureAllDropped=item;
+          });
+          print(currentPageNumber);
 
-  Future<List> fetch_ShopAll(String section) async {
+//          movieOperation = CancelableOperation.fromFuture(injector
+//              .movieRepository
+//              .fetchMovies(currentPageNumber + 1)
+//              .then((moviesObject) {
+//            currentPageNumber = moviesObject.page;
+            loadMoreStatus = MovieLoadMoreStatus.STABLE;
+//            setState(() => movies.addAll(moviesObject.movies));
+          }
+        }
+      }
+
+    return true;
+  }
+
+  Future<List> fetch_ShopAll(String section,int pagenumber) async {
 
 
 
     List data;
-    final response = await http.get('https://itloes.com/m/api/$section?page=1');
+    final response = await http.get('https://itloes.com/m/api/$section?page=$pagenumber');
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -163,3 +216,4 @@ class _ShowAllState extends State<ShowAll> {
 
 
 }
+enum MovieLoadMoreStatus { LOADING, STABLE }

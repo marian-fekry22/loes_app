@@ -135,7 +135,7 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
                     borderRadius: new BorderRadius.circular(3.0),
                   ),
                   child: TextFormField(
-                      controller: passwordController,
+                      controller: building_noController,
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please enter building NO';

@@ -12,7 +12,7 @@ import 'package:loes_app/model/Discover_Index.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'Widget/BottomMenu.dart';
-//import 'package:connectivity/connectivity.dart';
+import 'package:connectivity/connectivity.dart';
 
 class DiscoverPage extends StatefulWidget {
   DiscoverPage({Key key, this.title}) : super(key: key);
@@ -34,8 +34,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
     super.initState();
 //    futuredata = fetch_DiscoverData_index();
     check_internet();
-
-
   }
 
 
@@ -47,41 +45,32 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
 
   check_internet()async{
-//    var connectivityResult = await (Connectivity().checkConnectivity());
-//    if (connectivityResult == ConnectivityResult.none) {
-//      print('no internet ????????????????????????????????????????????????????????????????????????????????????????????????');
-//    }
-//  else if (connectivityResult == ConnectivityResult.wifi) {
-//    // I am connected to a wifi network.
-//      print(' internet ????????????????????????????????????????????????????????????????????????????????????????????????');
-//  }
-//    else    print(' internet ????????????????????????????????????????????????????????????????????????????????????????????????');
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi) {
+        ChangeValues(true);
 
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        setState(() {
-          connection=true;
-          futuredata = fetch_DiscoverData_index();
-          print('connected');
-        });
-//          connection=true;
-//          futuredata = fetch_DiscoverData_index();
-//          print('connected');
-
+      } else {
+        ChangeValues(false);
 
       }
-    } on SocketException catch (_) {
+    });
+  }
 
+  void ChangeValues(bool connected ){
+    if(connected){
       setState(() {
-        connection=false;
+        connection=true;
+        futuredata = fetch_DiscoverData_index();
+        print('connected');
+      });
+    }else{
+      print('connected');
+      setState(() {
+
         showInSnackBar();
       });
-
-
-      print('not connected');
     }
-
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -96,7 +85,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
       backgroundColor: Colors.white,
 
-        body:(connection)?FutureBuilder<Discover_Index>(
+        body:(connection)?
+      FutureBuilder<Discover_Index>(
           future: futuredata,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -349,7 +339,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             // By default, show a loading spinner.
             return Center(child: CircularProgressIndicator());
           },
-        ): null
+        ):Text('')
 
     );
   }

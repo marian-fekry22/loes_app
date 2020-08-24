@@ -9,6 +9,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'Porduct.dart';
 import 'Widget/BottomMenu.dart';
+import 'package:connectivity/connectivity.dart';
 
 class CalendarTab extends StatefulWidget {
   CalendarTab({Key key, this.title}) : super(key: key);
@@ -34,8 +35,8 @@ class _CalendarTabState extends State<CalendarTab> {
   void initState() {
     super.initState();
 //    futuredata = fetch_DiscoverData_index();
-    check_internet();
-
+//    check_internet();
+    futuredata = fetch_DiscoverData_index();
 
   }
 
@@ -47,36 +48,36 @@ class _CalendarTabState extends State<CalendarTab> {
   }
 
 
+
   check_internet()async{
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi) {
+        ChangeValues(true);
 
-
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        setState(() {
-          connection=true;
-          futuredata = fetch_DiscoverData_index();
-          print('connected');
-        });
-//          connection=true;
-//          futuredata = fetch_DiscoverData_index();
-//          print('connected');
-
+      } else {
+        ChangeValues(false);
 
       }
-    } on SocketException catch (_) {
+    });
 
+
+  }
+  void ChangeValues(bool connected ){
+    if(connected){
+      setState(() {
+        connection=true;
+        futuredata = fetch_DiscoverData_index();
+        print('connected');
+      });
+    }else{
+      print('connected');
       setState(() {
         connection=false;
         showInSnackBar();
       });
-
-
-      print('not connected');
     }
-
   }
-
 
 
   Future<productDetails> fetch_DiscoverData_index() async {
@@ -572,7 +573,7 @@ class _CalendarTabState extends State<CalendarTab> {
 //      bottomNavigationBar :BottomMenu(),
 
 
-      body:(connection)?FutureBuilder<productDetails>(
+      body:FutureBuilder<productDetails>(
         future: futuredata,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -630,7 +631,7 @@ class _CalendarTabState extends State<CalendarTab> {
           // By default, show a loading spinner.
           return Center(child: CircularProgressIndicator());
         },
-      ):null
+      )
 
 
     );
